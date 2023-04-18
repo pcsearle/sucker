@@ -1,0 +1,26 @@
+---
+title: "readme"
+author: "Peter Searle"
+date: "2023-04-18"
+output: html_document
+---
+
+# Files used for geometric morphometric analysis of premaxilla shape
+
+Description: 
+
+abc_Aligned_Landmarks.tps - Generalized Procrustes Aligned landmarks from tpsRelw
+abc_complete.xlsx - Variables file for SAS analysis. 
+  Name: Original name of file
+  ID: ID associated with each specimen
+  Species: 1 = June Sucker, 2 = Utah Lake Utah Sucker, 3 = Strawberry Reservoir Utah sucker 
+  Time: Some fish were collected multiple times in a week
+  Week: Some fish were collected multiple times in a week
+abc_Landmarks.tps - Landmarks from tpsDig
+abc_Links.NTS - Links file
+abc_RWs.NTS - Relative warps from tpsRelw
+abc_Sliders.NTS - Semi-landmarks file
+JU_Sp_Week_Gross.txt - Least squares means for 3-way interaction in SAS
+Premaxilla_SAS.pdf - All SAS output
+abc_RWs_Report.txt - Report from tpsRelw
+

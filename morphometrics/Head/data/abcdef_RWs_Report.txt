@@ -1,0 +1,135 @@
+tpsRelw program, (C) 2019, F. James Rohlf
+Version: 1.70
+Date & time: 6/30/2020 3:33:58 PM
+----------------------------------------
+Data file: C:\Users\searleps\Desktop\abcdef_Landmarks_Final_Scales_Adjusted.TPS
+There are 398 specimens
+ 
+Links read from file: C:\Users\searleps\Box\Sucker\Geometric_Morphometrics\Combined\abcdef_Links.NTS
+  8 links read
+Sliding semilandmarks definitions read from file: 
+C:\Users\searleps\Box\Sucker\Geometric_Morphometrics\Combined\abcdef_Sliders.NTS
+  2 semilandmarks defined
+Alignment scaling method = unit centroid size
+Alignment projection method = orthogonal
+Reference will not be aligned to its PCA axes.
+
+GPA iterations:
+ iter     change
+    1 0.01756518
+    2 0.00000055
+    3 0.00000000
+ 
+Consensus configuration:
+ 
+---
+  1    0.36555   -0.00748
+  2    0.05931    0.03897
+  3   -0.14701    0.05465
+  4   -0.30713   -0.03479
+  5   -0.14064    0.14918
+  6    0.07301    0.21846
+  7    0.38485    0.24962
+  8    0.34537   -0.25659
+  9    0.03938   -0.21579
+ 10   -0.16454   -0.16102
+ 11   -0.25143   -0.11673
+ 12   -0.25673    0.08151
+
+GPA iterations with sliding:
+ iter          Sum d²      Change  Bending energy      Change
+    1      3.42301370                 22.76411176
+    2      3.42301370  0.00000000     22.76411176  0.00000000
+    3      3.42301370  0.00000000     22.76411176  0.00000000
+    4      3.42301370  0.00000000     22.76411176  0.00000000
+ 
+Consensus configuration after sliding:
+ 
+---
+  1    0.365552   -0.007475
+  2    0.059314    0.038970
+  3   -0.147009    0.054646
+  4   -0.307129   -0.034787
+  5   -0.140639    0.149184
+  6    0.073014    0.218463
+  7    0.384849    0.249619
+  8    0.345371   -0.256592
+  9    0.039379   -0.215789
+ 10   -0.164543   -0.161018
+ 11   -0.251426   -0.116727
+ 12   -0.256732    0.081507
+
+Centroid size allowing for sliders computed.
+
+Variances at each landmark for aligned specimens:
+    i         S²x         S²y          S²
+    1  0.00039631  0.00070065  0.00109696
+    2  0.00012959  0.00040486  0.00053445
+    3  0.00038442  0.00053702  0.00092143
+    4  0.00017418  0.00070438  0.00087856
+    5  0.00050398  0.00024401  0.00074799
+    6  0.00030425  0.00021008  0.00051433
+    7  0.00025374  0.00046205  0.00071579
+    8  0.00084305  0.00070499  0.00154804
+    9  0.00015382  0.00032675  0.00048056
+   10  0.00021522  0.00038893  0.00060415
+   11  0.00009299  0.00015825  0.00025124
+   12  0.00005210  0.00004125  0.00009336
+ 
+Eigenvalues for each principal warp:
+  i       Lambda
+  1  7.3649E+001
+  2  4.1132E+001
+  3  3.6746E+001
+  4  1.5647E+001
+  5  1.3476E+001
+  6  8.6719E+000
+  7  7.2563E+000
+  8  2.9580E+000
+  9  2.2295E+000
+
+
+Uniform component estimated by sweeping the partial warps
+from the projections of the aligned coordinates into the
+tangent space and then using SVD to extract the non-singular
+dimensions.
+ 
+Relative contribution of each landmark (from R''t matrix):
+(see Rohlf (1993) paper on relative warps)
+  LM#       SS
+    1  0.00780
+    2  0.02682
+    3  0.11074
+    4  0.18127
+    5  0.08750
+    6  0.01738
+    7  0.00272
+    8  0.00305
+    9  0.01546
+   10  0.13774
+   11  0.29639
+   12  0.11314
+
+Singular values and percent explained for relative warps:
+No.         SV        %    Cum %
+   1    1.46647    64.59%    64.59% 
+   2    0.56458     9.57%    74.16% 
+   3    0.54657     8.97%    83.13% 
+   4    0.40352     4.89%    88.02% 
+   5    0.34801     3.64%    91.66% 
+   6    0.32391     3.15%    94.81% 
+   7    0.25025     1.88%    96.69% 
+   8    0.20606     1.28%    97.97% 
+   9    0.18337     1.01%    98.98% 
+  10    0.11226     0.38%    99.36% 
+  11    0.09465     0.27%    99.63% 
+  12    0.07475     0.17%    99.79% 
+  13    0.04372     0.06%    99.85% 
+  14    0.03516     0.04%    99.89% 
+  15    0.03016     0.03%    99.92% 
+  16    0.02904     0.03%    99.94% 
+  17    0.02534     0.02%    99.96% 
+  18    0.02366     0.02%    99.98% 
+  19    0.02130     0.01%    99.99% 
+  20    0.01687     0.01%   100.00% 
+

@@ -1,0 +1,26 @@
+---
+title: "readme"
+author: "Peter Searle"
+date: "2023-04-18"
+output: html_document
+---
+
+# Files used for geometric morphometric analysis of head shape
+
+Description: 
+
+abcdef_Aligned_Landmarks.tps - Generalized Procrustes Aligned landmarks from tpsRelw
+abcdef_complete.xlsx - Variables file for SAS analysis. 
+  Name: Original name of file
+  ID: ID associated with each specimen
+  Species: 1 = June Sucker, 2 = Utah Lake Utah Sucker, 3 = Strawberry Reservoir Utah sucker 
+  Time: Some fish were collected multiple times in a week
+  Week: Some fish were collected multiple times in a week
+  CS: Centroid Size 
+abcdef_Links.NTS - Links file
+abcdef_RWs.NTS - Relative warps from tpsRelw
+abcdef_Sliders.NTS - Semi-landmarks file
+JU_Sp_Week_Gross.txt - Least squares means for 3-way interaction in SAS
+Head_SAS.pdf - All SAS output
+abcdef_RWs_Report.txt - Report from tpsRelw
+

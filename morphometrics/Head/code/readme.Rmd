@@ -1,0 +1,14 @@
+---
+title: "readme"
+author: "Peter Searle"
+date: "2023-04-18"
+output: html_document
+---
+
+# Code used for geometric morphometric analysis of head shape
+
+Description: 
+
+Head.Rmd - Code for geometric morphometric analyses run R
+SAS.txt - Code for mixed model run in SAS
+

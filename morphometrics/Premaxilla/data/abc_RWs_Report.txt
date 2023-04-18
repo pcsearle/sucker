@@ -1,0 +1,189 @@
+tpsRelw program, (C) 2019, F. James Rohlf
+Version: 1.70
+Date & time: 8/10/2020 9:23:25 AM
+----------------------------------------
+Data file: C:\Users\Peter Searle\Box\Sucker\Geometric_Morphometrics\Group 
+a,b,c\Stained\Landmarks\Landmarks_Final_8.6.20\abc_Premaxilla_Landmarks_Final_8.6.20.tps
+There are 188 specimens
+ 
+Links read from file: C:\Users\Peter Searle\Box\Sucker\Geometric_Morphometrics\Group 
+a,b,c\Stained\Landmarks\Landmarks_Final_8.6.20\abc_Premaxilla_Links.NTS
+  8 links read
+Sliding semilandmarks definitions read from file: C:\Users\Peter 
+Searle\Box\Sucker\Geometric_Morphometrics\Group 
+a,b,c\Stained\Landmarks\Landmarks_Final_8.6.20\abc_Premaxilla_Sliders.NTS
+  5 semilandmarks defined
+Alignment scaling method = unit centroid size
+Alignment projection method = orthogonal
+Reference will not be aligned to its PCA axes.
+
+GPA iterations:
+ iter     change
+    1 0.02176525
+    2 0.00000063
+    3 0.00000000
+ 
+Consensus configuration:
+ 
+---
+  1   -0.18623    0.53803
+  2   -0.17981   -0.19389
+  3    0.38536   -0.38070
+  4    0.01389    0.03644
+  5   -0.12039    0.26602
+  6   -0.22087    0.16087
+  7    0.10049   -0.27166
+  8    0.20755   -0.15511
+
+GPA iterations with sliding:
+ iter          Sum d²      Change  Bending energy      Change
+    1      1.30346612                  1.51259249
+    2      1.30346612  0.00000000      1.51259249  0.00000000
+    3      1.30346612  0.00000000      1.51259249  0.00000000
+    4      1.30346612  0.00000000      1.51259249  0.00000000
+ 
+Consensus configuration after sliding:
+ 
+---
+  1   -0.186231    0.538032
+  2   -0.179810   -0.193889
+  3    0.385364   -0.380702
+  4    0.013888    0.036443
+  5   -0.120388    0.266017
+  6   -0.220870    0.160869
+  7    0.100493   -0.271656
+  8    0.207555   -0.155114
+
+Centroid size allowing for sliders computed.
+
+Variances at each landmark for aligned specimens:
+    i         S²x         S²y          S²
+    1  0.00028920  0.00068156  0.00097076
+    2  0.00093251  0.00157574  0.00250824
+    3  0.00063983  0.00075640  0.00139623
+    4  0.00019246  0.00011190  0.00030437
+    5  0.00017737  0.00014260  0.00031998
+    6  0.00017637  0.00019271  0.00036908
+    7  0.00011453  0.00031437  0.00042890
+    8  0.00039213  0.00019526  0.00058739
+ 
+Eigenvalues for each principal warp:
+  i       Lambda
+  1  1.6778E+001
+  2  1.3199E+001
+  3  8.0798E+000
+  4  3.0715E+000
+  5  1.8549E+000
+
+
+Uniform component estimated by sweeping the partial warps
+from the projections of the aligned coordinates into the
+tangent space and then using SVD to extract the non-singular
+dimensions.
+ 
+Data file: C:\Users\Peter Searle\Box\Sucker\Geometric_Morphometrics\Group 
+a,b,c\Stained\Landmarks\Landmarks_Final_8.6.20\abc_Premaxilla_Landmarks_Final_8.6.20.tps
+There are 188 specimens
+ 
+Links read from file: C:\Users\Peter Searle\Box\Sucker\Geometric_Morphometrics\Group 
+a,b,c\Stained\Landmarks\Landmarks_Final_8.6.20\abc_Premaxilla_Links.NTS
+  8 links read
+Sliding semilandmarks definitions read from file: C:\Users\Peter 
+Searle\Box\Sucker\Geometric_Morphometrics\Group 
+a,b,c\Stained\Landmarks\Landmarks_Final_8.6.20\abc_Premaxilla_Sliders.NTS
+  5 semilandmarks defined
+Alignment scaling method = unit centroid size
+Alignment projection method = orthogonal
+Reference will not be aligned to its PCA axes.
+
+GPA iterations:
+ iter     change
+    1 0.02176525
+    2 0.00000063
+    3 0.00000000
+ 
+Consensus configuration:
+ 
+---
+  1   -0.18623    0.53803
+  2   -0.17981   -0.19389
+  3    0.38536   -0.38070
+  4    0.01389    0.03644
+  5   -0.12039    0.26602
+  6   -0.22087    0.16087
+  7    0.10049   -0.27166
+  8    0.20755   -0.15511
+
+GPA iterations with sliding:
+ iter          Sum d²      Change  Bending energy      Change
+    1      1.17815757                  2.51348804
+    2      1.17815757  0.00000000      2.51348804  0.00000000
+    3      1.17815757  0.00000000      2.51348804  0.00000000
+    4      1.17815757  0.00000000      2.51348804  0.00000000
+ 
+Consensus configuration after sliding:
+ 
+---
+  1   -0.186231    0.538032
+  2   -0.179810   -0.193889
+  3    0.385364   -0.380702
+  4    0.013888    0.036443
+  5   -0.120388    0.266017
+  6   -0.220870    0.160869
+  7    0.100493   -0.271656
+  8    0.207555   -0.155114
+
+Centroid size allowing for sliders computed.
+
+Variances at each landmark for aligned specimens:
+    i         S²x         S²y          S²
+    1  0.00028085  0.00054196  0.00082280
+    2  0.00092711  0.00161278  0.00253990
+    3  0.00061905  0.00080822  0.00142727
+    4  0.00022216  0.00007799  0.00030015
+    5  0.00018860  0.00006445  0.00025305
+    6  0.00016641  0.00001746  0.00018386
+    7  0.00007783  0.00030878  0.00038661
+    8  0.00019577  0.00012307  0.00031884
+ 
+Eigenvalues for each principal warp:
+  i       Lambda
+  1  1.6778E+001
+  2  1.3199E+001
+  3  8.0798E+000
+  4  3.0715E+000
+  5  1.8549E+000
+
+
+Uniform component estimated by sweeping the partial warps
+from the projections of the aligned coordinates into the
+tangent space and then using SVD to extract the non-singular
+dimensions.
+ 
+Relative contribution of each landmark (from R''t matrix):
+(see Rohlf (1993) paper on relative warps)
+  LM#       SS
+    1  0.01454
+    2  0.07201
+    3  0.01114
+    4  0.13757
+    5  0.26785
+    6  0.15522
+    7  0.15836
+    8  0.18331
+
+Singular values and percent explained for relative warps:
+No.         SV        %    Cum %
+   1    0.79912    54.79%    54.79% 
+   2    0.51286    22.57%    77.36% 
+   3    0.34685    10.32%    87.68% 
+   4    0.21753     4.06%    91.74% 
+   5    0.19352     3.21%    94.96% 
+   6    0.14518     1.81%    96.77% 
+   7    0.12743     1.39%    98.16% 
+   8    0.12159     1.27%    99.43% 
+   9    0.07518     0.48%    99.91% 
+  10    0.02612     0.06%    99.97% 
+  11    0.01594     0.02%    99.99% 
+  12    0.00957     0.01%   100.00% 
+

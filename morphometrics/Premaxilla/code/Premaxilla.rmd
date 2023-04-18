@@ -1,0 +1,507 @@
+---
+title: "Premaxilla Geometric Morphometrics"
+author: "Peter Searle"
+date: '2022-11-09'
+output: html_document
+---
+
+# Working Directory
+
+The following codes sets the working directory for all subsequent code chunks
+
+```{r setup, include=FALSE, echo=FALSE}
+
+require("knitr")
+opts_knit$set(root.dir = "/home/searleps/Sucker/Geometric_Morphometrics/Morphometrics/Premaxilla/")
+
+```
+
+# SAS Input
+
+Import results from SAS
+
+1) Select the rows and columns for the effect of interest (typically the three way interaction) in the PDF
+2) Paste this data into a .txt file
+3) Manually remove column names and page numbers (there will likely be multiple instances of this) from this .txt file
+4) Import .txt file into Rstudio
+
+```{r}
+
+library(tidyverse)
+library(readxl)
+
+setwd("/home/searleps/Sucker/Geometric_Morphometrics/Premaxilla/")
+
+analysis <- read.delim(file = "./data/JU_Sp_Week_Gross.txt", sep = " ", header = FALSE) %>% as_tibble()
+
+# Assign same column names as seen in PDF file to table - may be different depending on what was specified in SAS. 
+colnames(analysis) <- c('Effect', 'ID', 'Species', 'Week',
+                        'Estimate', 'Standard Error', 'DF', 't Value', 'PR > |t|',
+                        'Alpha', 'Lower', 'Upper')
+
+analysis <- mutate(analysis, Species = case_when(Species == 1 ~ "June", 
+                                                 Species == 2 ~ "Utah", 
+                                                 Species == 3 ~ "Strawberry"))
+
+analysis <- mutate(analysis, ID2 = case_when(analysis$ID == 'RW1' ~ 1,
+                                    analysis$ID == 'RW2' ~ 2,
+                                    analysis$ID == 'RW3' ~ 3,
+                                    analysis$ID == 'RW4' ~ 4,
+                                    analysis$ID == 'RW5' ~ 5,
+                                    analysis$ID == 'RW6' ~ 6))
+
+# Change species to factor and relevel so legend is formatted correctly
+analysis$Species <- as.factor(analysis$Species) 
+analysis$Species <- relevel(analysis$Species, "Strawberry") 
+analysis$Species <- relevel(analysis$Species, "Utah")
+analysis$Species <- relevel(analysis$Species, "June")
+
+```
+
+# Figure 1A -  RW1 and RW2 Thin Plate Splines
+
+The following code generates tps images allowing you to visualize how shape changes along RW1 and RW2 (Relative Warp). 
+
+```{r}
+
+library(geomorph)
+
+# Read in Generalize Procrustes aligned landmarks from tpsRelw. Don't use the Generalized Procrustes Scaled Aligned Specimens. 
+
+# Ignore warnings because a) sliders were accounted for in GPA step and are no longer specified, b) landmarks have already been scaled, and c) there are negative landmarks because the superimposition process centers the landmarks around 0. 
+
+GPA_Ldmrk <- readland.tps(file = "./data/abc_Aligned_Landmarks.tps", specID = 'ID')
+
+# Generate sliders file
+sliders <- read.delim(file = "./data/abc_Sliders.NTS", sep = " ", header = FALSE, skip = 2) 
+
+colnames(sliders) <- c("before", "slide", "after")
+
+# Generate links file
+links <- read.delim(file = "./data/abc_Links.NTS", sep = " ", header = FALSE, skip = 2) 
+
+# Generate Relative Warps (Geomorph calls these principal components)
+PCA <- gm.prcomp(GPA_Ldmrk)
+summary(PCA)
+
+# Plot PC1 vs. PC2
+PCA_Plot <- plot(PCA, main = "PCA")
+
+# Generate reference shape to use with plotRefToTarget()
+consensus <- mshape(GPA_Ldmrk)
+
+# Generate plot of the shape difference of a target specimen relative to a reference specimen
+getTPS <- function(pc, min, max, reference, lnks) {
+  
+  name1 <- paste0("./plots/FigA/", pc, "_Min.pdf")
+  
+  name2 <- paste0("./plots/FigA/", pc, "_Max.pdf")
+  
+  GP <- gridPar(n.col.cell = 5)
+  
+  # Save tps of min
+  
+  dev.set()
+  pdf(file = name1)
+  plotRefToTarget(reference, min, links = lnks, gridPars = GP) # Must provide reference followed by target
+  dev.off()
+ 
+  # Save tps of max
+   
+  dev.set()
+  pdf(file = name2)
+  plotRefToTarget(reference, max, links = lnks, gridPars = GP)
+  dev.off()
+  
+}
+
+getTPS("PC1", PCA$shapes$shapes.comp1$min, PCA$shapes$shapes.comp1$max, consensus, links)
+getTPS("PC2", PCA$shapes$shapes.comp2$min, PCA$shapes$shapes.comp2$max, consensus, links)
+
+
+```
+
+
+# Figure 1B - RW1 and RW2 Least-Squares Means
+
+The following code plots the lsmeans (typically the 3-way interaction) from the output of the linear mixed model on RW1 and RW2.
+
+Typically we would include CI for each point. However, since there are so many points for this analysis, we chose to remove them.
+
+## Plot
+
+```{r}
+library(tidyverse)
+library(ggrepel)
+library(viridis)
+
+RWs <- filter(analysis, ID == "RW1" | ID == "RW2")
+
+RW <- dplyr::select(RWs, ID, Species, Week, Estimate) %>% 
+  pivot_wider(names_from = ID, values_from = Estimate)
+
+myPlot <- ggplot(data = RW, aes(x = RW1, y = RW2, color = Species)) +
+  geom_point(shape= 16, size = 2.5) +
+  geom_path(size = .5) +
+  geom_text_repel(aes(label = Week), size = 4, segment.color = "black", 
+                  segment.size = .1,  color = "black", max.overlaps = 20) +
+  facet_grid(rows = vars(Species)) +
+  # Percentages are from tpsRelw analysis
+  scale_x_continuous(name = "Relative Warp 1 (54.79%)", 
+                     breaks = c(-.1,0.0,0.1), limits = c(-0.1,0.1))+ 
+  scale_y_continuous(name="Relative Warp 2 (22.57%)", 
+                     breaks=c(-.04,0,0,.04), limits=c(-0.05,0.05)) + 
+  coord_fixed(ratio = 22.57/54.79) +
+  theme_bw() +
+  scale_color_viridis(discrete=TRUE, end = .8) +
+  theme(legend.position = "none", panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        axis.title.x = element_text(face = "bold", size = 16, margin=margin(10,0,0,0)),
+        axis.text.x = element_text(size = 12, margin=margin(5,0,0,0)),
+        axis.title.y = element_text(face = "bold", size = 16, margin=margin(0,10,0,0)),
+        axis.text.y = element_text(size = 12, margin=margin(0,5,0,0)))
+
+ggsave("./plots/FigB/RWs.pdf", myPlot, height = 7, width = 7, units = "in")
+
+```
+
+# Figure 1C -  All Relative Warps Least-Squares Means
+
+This code generates graphs with relative warp numbers on the x-axis and relative warp values on y-axis. Its lets one visualize which relative warps contribute the most to the significant interaction seen in the mixed model run in SAS.
+
+## Specific Weeks
+
+```{r}
+
+library(tidyverse)
+library(ggplot2)
+library(ggrepel)
+library(ggforce)
+library(gridExtra)
+
+Week14 <- filter(analysis, Week == 14)
+
+myPlot <- ggplot(Week14, aes(x=ID2, y=Estimate, color = Species)) +
+  geom_errorbar(aes(ymax = Upper, ymin = Lower), linetype = 1, width = .3, 
+                position=position_dodge(width=0.5)) +
+  geom_point(size = 2, position=position_dodge(width=0.5)) +
+  scale_color_viridis(discrete=TRUE, end = .8) +
+  geom_line(position=position_dodge(width=0.5), size = .3) +
+  scale_x_continuous(name="Relative Warp Number", breaks=c(1,2,3,4,5,6), limits=c(0.75,6.25)) +
+  theme_bw() +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        axis.title.x = element_text(size = 16, face = "bold", margin=margin(10,0,0,0)),
+        axis.text.x = element_text(size = 12, margin=margin(5,0,0,0)),
+        axis.title.y = element_text(size = 16, face = "bold", margin=margin(0,10,0,0)),
+        axis.text.y = element_text(size = 12, margin=margin(0,5,0,0)),
+        legend.title = element_blank(), legend.text = element_text(size=14),
+        legend.background = element_blank(), legend.margin = margin(c(1,6,1,0)),
+        panel.grid.major.y = element_line(), panel.spacing.x = unit(0, "line"),
+        panel.border = element_rect(size = .25), legend.key=element_blank(), 
+        axis.line.x.bottom = element_line(color = 'black', size = .25),
+        axis.line.y.left   = element_line(color = 'black', size = .25),
+        axis.line.y.right  = element_line(color = 'black', size = .25))
+
+ggsave("./plots/FigC/Week14.pdf", myPlot, height = 7, width = 7, units = "in")
+```
+
+# Figure 1D - Divergence Vector Analysis
+
+## Least-squares means
+
+Extract the least squares means (lsmeans) from the mixed model analysis for combination of interest for all relative warps. Columns should be lsmeans 1-X and rows should be comparison (i.e., lsmeans in week 14 between June sucker and Strawberry Reservoir Utah sucker and so forth)
+
+```{r}
+
+# lsMeans (i.e., Estimate) for each combination of species at week 14
+
+lsMean <- function(species1, species2, SAS_analysis, RW, wk) {
+  lsMean1 <- filter(SAS_analysis, Week == wk, Species == species1) %>% pull(Estimate)
+  lsMean2 <- filter(analysis, Week == wk, Species == species2) %>% pull(Estimate)
+  combo <- rbind(lsMean1, lsMean2) 
+  colnames(combo) <- paste0('RW', c(1:RW))
+  return(combo)
+}
+
+JvU <- lsMean("June", "Utah", analysis, 6, 14)
+JvS <- lsMean("June", "Strawberry", analysis, 6, 14)
+UvS <- lsMean("Utah", "Strawberry", analysis, 6, 14)
+
+```
+
+## Variables and Relative Warps File
+
+Generate input file that contains variables of interest (i.e., week, species, habitat, etc.) and ID's from .tps file. Then add relative warps to this file for each individual. 
+
+```{r}
+
+library(readxl)
+
+variables <- read_excel("./data/abc_complete.xlsx")
+
+# Use .NTS file that has all relative warps that was generated using tpsRELW.
+# Skip first three lines because they have header information
+
+All_RWs <- read.delim(file = "./data/abc_RWs.NTS", sep = " ", header = FALSE, skip = 3) 
+
+# Remove extra columnn...not sure why it shows up
+All_RWs <- All_RWs[, 1:10] 
+
+# In this case there are 12 RWs per individual, but the .NTS file splits these RWs onto two lines. The next lines of code modifies the data frame so that there are 12 RWs per line. 
+
+# Create row indicator 
+row_odd <- seq_len(nrow(All_RWs)) %% 2 
+
+# Subset odd rows
+RWs_odd <- All_RWs[row_odd == 1, ]
+
+colnames(RWs_odd) <- paste0('RW', c(1:10))
+
+# Subset even rows
+RWs_even <- All_RWs[row_odd == 0, ] 
+
+colnames(RWs_even) <- paste0('RW', c(11:12))
+
+# Combine odd and even rows into one row with all relative warps listed
+RWs <- cbind(RWs_odd, RWs_even)
+
+# Drop unneeded columns with NA values
+RWs <- RWs[, 1:12] 
+
+# Subset RWs so that the file only includes the RWs used in the SAS analysis (in this case 9 RWs)
+RWs <- RWs[, 1:6]
+
+# Generate merged data set
+Final_Data <- cbind(variables, RWs)
+
+# For the premaxilla data we combined weeks to increase our sample size and get our analyses to converge
+Final_Data <- mutate(Final_Data, Wk = case_when(Week == 3 | Week == 4 ~ 4,
+                                                    Week == 5 | Week == 6 ~ 6,
+                                                    Week == 7 | Week == 8 ~ 8,
+                                                    Week == 9 | Week == 10 ~ 10,
+                                                    Week == 11 | Week == 12 ~ 12,
+                                                    Week == 13 | Week == 14 ~ 14))
+
+```
+
+## Generalized Procrustes Aligned Landmarks File
+
+```{r}
+
+# Read in Generalize Procrustes aligned landmarks from tpsRelw 
+
+# Ignore warnings because a) sliders were accounted for in GPA step and are no longer specified, b) landmarks have already been scaled, and c) there are negative landmarks because the superimposition process centers the landmarks around 0. 
+
+GPA_Ldmrk <- readland.tps(file = "./data/abc_Aligned_Landmarks.tps", specID = 'ID')
+
+```
+
+## Principal Components Analysis
+
+The next step is to run a principal components analysis between these two sets of lsmeans and extract the eigenvector from the first principal component. This should be done on the covariance matrix of the lsmeans. Using these values we can weight each of the individual relative warps and generate the divergence metric.
+
+```{r}
+
+getEigenvector <- function(combo) {
+  # Generate eigenvalues
+  eigenvalue <- eigen(cov(combo))
+  # Extract eigenvector from first principal component
+  eigenvector <- eigenvalue$vectors[,1]
+  return(eigenvector)
+}
+
+JvU_eigenvector <- getEigenvector(JvU)
+JvS_eigenvector <- getEigenvector(JvS)
+UvS_eigenvector <- getEigenvector(UvS)
+
+```
+
+## Divergence
+
+Divergence is calculated using the first Eigenvector and the relative warps used in the mixed model analysis. It is the sum of each relative warp multiplied by its associated Eigenvector. The plots I generated at the bottom were purely for fun. 
+
+```{r}
+
+getDivergence <- function(data, ignore, eigenvector, week) {
+  
+  data <- filter(data, Wk == week, Species != ignore)
+  
+  data$divergence <- apply(data[,6:11], 1, function(x) sum(x*eigenvector))
+  
+  divergence <- as.vector(data$divergence)
+  
+  return(divergence)
+  
+}
+
+JvU_divergence <- getDivergence(Final_Data, 3, JvU_eigenvector, 14)
+JvS_divergence <- getDivergence(Final_Data, 2, JvS_eigenvector, 14)
+UvS_divergence <- getDivergence(Final_Data, 1, UvS_eigenvector, 14)
+
+```
+
+## Regression
+
+The final step is to regress divergence against shape and then save the tps files from the negative and positive extremes of divergence. For this analysis we need to filter out and only retain the Generalized Procrustes Aligned Landmarks for the contrast of interest. 
+
+```{r}
+
+# Generate ID vectors that are then used to filter out the matrices of interest in the array. 
+
+# Because the ID starts with 0 in a .tps file, but R uses 1 for the first position, you have to add 1 to the ID to get the appropriate landmarks filtered out. 
+
+getID <- function(data, ignore) {
+  ID <- filter(data, Wk == 14, Species != ignore) %>% pull(ID)
+  return(ID)
+}
+
+# ID of 0 equals position of 1 in R
+
+JvU_ID <- getID(Final_Data, 3) + 1
+JvS_ID <- getID(Final_Data, 2) + 1
+UvS_ID <- getID(Final_Data, 1) + 1
+
+# Filtered Landmarks
+
+JvU_Ldmrk <- GPA_Ldmrk[,,JvU_ID]
+JvS_Ldmrk <- GPA_Ldmrk[,,JvS_ID]
+UvS_Ldmrk <- GPA_Ldmrk[,,UvS_ID]
+
+```
+
+Regress shape against divergence (i.e., continuous variable)
+
+Adapted from https://cran.r-project.org/web/packages/geomorph/geomorph.pdf, specifically the shape.predictor function. 
+
+```{r}
+
+# Use procD.lm() to run linear regression with Y=Coordinates and X=Divergence. Generate Regression Scores with plot(). Use fitted values and regression scores with  shape.predictor() to generate TPS images from minimum and maximum RegScore (i.e., divergence). This allows you to visualize how shape is changing across all relative warps for the contrast of interest. 
+
+# For some reason procD.lm() does not like to cooperate in a function. I opted to run it separately and then input the results into the function below
+
+JvU_fit <- procD.lm(JvU_Ldmrk ~ JvU_divergence)
+JvS_fit <- procD.lm(JvS_Ldmrk ~ JvS_divergence)
+UvS_fit <- procD.lm(UvS_Ldmrk ~ UvS_divergence)
+
+getTPS <- function(fit, ldmrk, divergence, filename, lnks) {
+  
+  tpsPlot <- plot(fit, type = "regression", predictor = divergence, 
+                reg.type = "RegScore", pch = 21, bg = "yellow")
+  
+  preds <- shape.predictor(fit$GM$fitted, x = tpsPlot$RegScore, 
+                         predmin = min(tpsPlot$RegScore),
+                         predmax = max(tpsPlot$RegScore))
+  
+  # Generate reference shape to use with plotRefToTarget()
+  
+  ref<-mshape(ldmrk)
+  
+  # Generate names to use below to save files
+  
+  name1 <- paste0("./plots/FigD/", filename, "_Min.pdf")
+  
+  name2 <- paste0("./plots/FigD/", filename, "_Max.pdf")
+  
+  GP <- gridPar(n.col.cell = 5)
+  
+  # Save tps of most negative divergence
+  
+  dev.set()
+  pdf(file = name1)
+  plotRefToTarget(ref, preds$predmin, mag=1, links = lnks, gridPars = GP)
+  dev.off()
+  
+  # Save tps of most positive divergence 
+  
+  dev.set()
+  pdf(file = name2)
+  plotRefToTarget(ref, preds$predmax, mag=1, links = lnks, gridPars = GP)
+  dev.off()
+  
+}
+
+getTPS(JvU_fit, JvU_Ldmrk, JvU_divergence, "JvU", links)
+getTPS(JvS_fit, JvS_Ldmrk, JvS_divergence, "JvS", links)
+getTPS(UvS_fit, UvS_Ldmrk, UvS_divergence, "UvS", links)
+
+```
+
+# Length
+
+The following plot is of the length of the vertical and lateral limbs of the premaxilla. It shows that premaxilla size changes during development.
+
+## Determine interlandmark distance 
+
+```{r}
+library(geomorph)
+library(tidyverse)
+
+# Read in raw landmarks (automatically accounts for scaling if scale= is present)
+Raw_Ldmrk <- readland.tps(file = "./data/abc_Landmarks.tps", specID = "ID")
+
+# Make a matrix defining 2 interlandmark distances (1-2 is vertical limb length, 2-3 is lateral limb length)
+
+lmks <- matrix(c(1,2,2,3), ncol=2, byrow=TRUE, dimnames = list(c("vertical", "lateral"),c("start", "end")))
+
+lineardists <- interlmkdist(Raw_Ldmrk, lmks) %>% as_tibble() %>% add_column(ID = 0:187)
+
+```
+
+## Merge length matrix with premaxilla data
+
+```{r}
+
+all <- full_join(lineardists, variables) %>% mutate(Combo = case_when(Week == 3 | Week == 4 ~ 4,
+                                                                 Week == 5 | Week == 6 ~ 6,
+                                                                 Week == 7 | Week == 8 ~ 8,
+                                                                 Week == 9 | Week == 10 ~ 10,
+                                                                 Week == 11 | Week == 12 ~ 12,
+                                                                 Week == 13 | Week == 14 ~ 14))
+
+vertical <- group_by(all, Species, Combo) %>% summarise(vMean = mean(vertical), vSd = sd(vertical))
+
+lateral <- group_by(all, Species, Combo) %>% summarise(lMean = mean(lateral), lSd = sd(lateral))
+
+comboWks <- full_join(vertical, lateral) %>% mutate(Spcs = factor(Species, c(1, 2, 3), c("June", "Utah", "Strawberry")))
+
+# Ratios
+# If the ratio of these is similar, that indicates that the shape (i.e., lengths of landmarks) is roughly the same
+
+comboWks <- mutate(comboWks, ratio = vMean/lMean)
+
+comboWks$Combo <- as.factor(comboWks$Combo)
+
+```
+
+## Generate Graph
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(ggrepel)
+library(viridis)
+library(yarr)
+
+# Vertical vs. Lateral Length
+
+myPlot <- ggplot(comboWks, aes(lMean, vMean)) +
+  geom_point(aes(color = Spcs, shape = Combo)) +
+  geom_path(aes(color = Spcs)) +
+  xlab("Lateral") +
+  ylab("Vertical") +
+  geom_errorbar(aes(ymin=vMean-vSd, ymax=vMean+vSd), width = .1, color = gray(0, .1)) +
+  geom_errorbar(aes(xmin=lMean-lSd, xmax=lMean+lSd), width = .1, color = gray(0, .1)) +
+  scale_colour_discrete("Species") +
+  scale_shape_discrete("Week") +
+  scale_color_viridis(discrete=TRUE, end = .8) +
+  coord_fixed(ratio = 1) +
+  theme_bw() +
+  theme(panel.grid = element_blank())
+
+myPlot
+
+ggsave("./plots/Length/Premaxilla_Length.pdf", myPlot, height = 7, width = 7, units = "in")
+
+```
+
+
+
