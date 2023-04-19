@@ -1,0 +1,14 @@
+---
+title: "readme"
+author: "Peter Searle"
+date: "2023-04-18"
+output: html_document
+---
+
+# Code used for differential expression analysis 
+
+Description: 
+
+differential_expression.Rmd - Code for differential expression analysis 
+
+

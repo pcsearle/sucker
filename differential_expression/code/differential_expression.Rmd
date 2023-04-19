@@ -1,0 +1,586 @@
+---
+title: "Differential Expression"
+author: "Peter Searle"
+date: "3/29/2022"
+output: html_document
+---
+
+# Setup
+
+## Working Directory
+
+The following codes sets the working directory for all subsequent code chunks
+
+```{r setup, include=FALSE, echo=FALSE}
+
+require("knitr")
+opts_knit$set(root.dir = "/home/searleps/github/sucker/differential_expression/")
+
+```
+
+## Installation of Miniconda3
+
+```{bash eval=FALSE}
+#!/bin/bash
+wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh
+bash Miniconda3-py39_4.9.2-Linux-x86_64.sh 
+source ~/miniconda3/bin/activate 
+```
+
+# Predict Gene Names
+
+Predict gene names for each transcript in the de novo transcriptomes using EggNOG Mapper in OmicsBox.
+
+## OmicsBox Instructions
+
+File > Load > Load Sequences > Load Fasta file (de novo transcriptomes)
+
+Functional Analysis > EggNOG Annotation > EggNOG Mapper > Run
+
+File > Export > Export Table (Save as .txt and then convert to .tsv)
+
+# Filter Transcriptomes
+
+## Filtered Transcripts .lst File
+
+Generate list of transcripts that do not have missing names, do not have e-values greater than 1e-30, and do share gene names across all lineages. 
+
+```{r}
+library(tidyverse)
+library(dplyr)
+
+# File Paths
+
+june_path <- "./data/predicted_genes/June_EggNOG.tsv"
+utah_path <- "./data/predicted_genes/Utah_EggNOG.tsv"
+straw_path <-  "./data/predicted_genes/Straw_EggNOG.tsv"
+
+# All transcripts
+
+june_all <- read_tsv(june_path) %>%
+  dplyr::rename(queryID = "Query ID", geneName = "Gene Name", eValue = "E-Value", bitScore = "Bit-Score") %>%
+  select(queryID, geneName, eValue, bitScore) 
+
+utah_all <- read_tsv(utah_path) %>%
+  dplyr::rename(queryID = "Query ID", geneName = "Gene Name", eValue = "E-Value", bitScore = "Bit-Score") %>%
+  select(queryID, geneName, eValue, bitScore) 
+
+straw_all <- read_tsv(straw_path) %>%
+  dplyr::rename(queryID = "Query ID", geneName = "Gene Name", eValue = "E-Value", bitScore = "Bit-Score") %>%
+  select(queryID, geneName, eValue, bitScore) 
+
+# Transcripts that don't have gene names removed
+
+june_na_removed <- filter(june_all, !is.na(geneName)) 
+utah_na_removed <- filter(utah_all, !is.na(geneName)) 
+straw_na_removed <- filter(straw_all, !is.na(geneName)) 
+
+# Transcripts with e-value > 1e-30 removed 
+
+june_eValue <- filter(june_na_removed, eValue < 1e-30) 
+utah_eValue <- filter(utah_na_removed, eValue < 1e-30) 
+straw_eValue <- filter(straw_na_removed, eValue < 1e-30) 
+
+# Common genes between 3 lineages
+
+june_gene_name <- june_eValue$geneName
+utah_gene_name <- utah_eValue$geneName
+straw_gene_name <- straw_eValue$geneName
+
+common_genes <- intersect(intersect(june_gene_name, utah_gene_name), straw_gene_name)
+
+june_final <- june_eValue %>%
+  filter(geneName %in% common_genes)
+
+utah_final <- utah_eValue %>%
+  filter(geneName %in% common_genes)
+
+straw_final <- straw_eValue %>%
+  filter(geneName %in% common_genes)
+
+path <- "./data/transcriptomes/filtered/transcript_IDs/"
+
+# Statistics
+results <- tibble(Category = "All", June = nrow(june_all), Utah = nrow(utah_all), Straw = nrow(straw_all))
+results <- add_row(results, Category = "NA Removed", June = nrow(june_na_removed), Utah = nrow(utah_na_removed), Straw = nrow(straw_na_removed))
+results <- add_row(results, Category = "eValue (1e-30)", June = nrow(june_eValue), Utah = nrow(utah_eValue), Straw = nrow(straw_eValue))
+results <- add_row(results, Category = "Final", June = nrow(june_final), Utah = nrow(utah_final), Straw = nrow(straw_final))
+write_tsv(results, paste0(path, "filter_results.tsv"))
+
+write.table(june_final$queryID, paste0(path, "june_transcripts.lst"), row.names = FALSE)
+write.table(utah_final$queryID, paste0(path, "utah_transcripts.lst"), row.names = FALSE)
+write.table(straw_final$queryID, paste0(path, "straw_transcripts.lst"), row.names = FALSE)
+```
+
+Modify text in transcripts.lst files so seqtk will run.
+
+```{bash}
+#!/bin/bash
+source ~/miniconda3/bin/activate 
+
+cd ~/github/sucker/differential_expression/data/transcriptomes/filtered/transcript_IDs/
+
+# Remove x and "'s from transcripts.lst 
+
+sed -i 's/x//g' *.lst
+sed -i 's/\"//g' *.lst
+
+# Remove blank line at start of file
+
+sed -i '/^$/d' *.lst
+```
+
+## Filtered Transcripts .fasta File
+
+Use seqtk to filter assembled transcriptomes using parameters described above. This creates transcriptomes that are comparable between lineages. Transcriptomes are available on NCBI under BioProject PRJNA818778. 
+
+**Here could figure out how to bring data in from NCBI**
+
+```{bash}
+#!/bin/bash
+source ~/miniconda3/bin/activate 
+
+# Installation 
+
+conda create -n seqtk seqtk
+conda activate seqtk
+
+# seqtk
+
+cd ~/github/sucker/differential_expression/data/transcriptomes/filtered/transcript_IDs/
+
+seqtk subseq ~/github/sucker/differential_expression/data/transcriptomes/unfiltered/june_transcripts.fasta june_transcripts.lst > ../filtered_transcripts/june_filtered_transcripts.fasta
+seqtk subseq ~/github/sucker/differential_expression/data/transcriptomes/unfiltered/utah_transcripts.fasta utah_transcripts.lst > ../filtered_transcripts/utah_filtered_transcripts.fasta
+seqtk subseq ~/github/sucker/differential_expression/data/transcriptomes/unfiltered/utah_transcripts.fasta utah_transcripts.lst > ../filtered_transcripts/utah_filtered_transcripts.fasta
+```
+
+# Quantify Transcript Abundance with Salmon
+
+```{bash}
+#!/bin/bash
+source ~/miniconda3/bin/activate 
+
+# Install salmon in its own environment
+
+conda config --add channels conda-forge
+conda config --add channels bioconda
+conda create -n salmon salmon
+
+# Activate salmon environment
+
+conda activate salmon
+```
+
+## Build an Index
+
+Build an index of the transcriptomes before performing transcript-level quantification
+
+```{bash}
+#!/bin/bash
+source ~/miniconda3/bin/activate
+conda activate salmon
+
+cd ~/github/sucker/differential_expression/data/salmon/index/
+
+salmon index -t ~/github/sucker/differential_expression/data/transcriptomes/filtered/filtered_transcripts/june_filtered_transcripts.fasta -i june_index
+salmon index -t ~/github/sucker/differential_expression/data/transcriptomes/filtered/filtered_transcripts/utah_filtered_transcripts.fasta -i utah_index
+salmon index -t ~/github/sucker/differential_expression/data/transcriptomes/filtered/filtered_transcripts/straw_filtered_transcripts.fasta -i straw_index
+```
+
+## Quantify Samples
+
+Salmon then quantifies transcript-level abundance using the index and RNA-seq data. The RNA-seq data is available under BioProject PRJNA818778.
+
+June sucker
+
+```{bash}
+#!/bin/bash
+source ~/miniconda3/bin/activate
+conda activate salmon
+
+for fn in ~/github/sucker/differential_expression/data/rna_seq/june/*_1.fq.gz;
+do
+  samp=`basename ${fn} _1.fq.gz`
+  echo "Processing sample ${samp}"
+
+  dir=`dirname ${fn}`
+  echo "${dir}"
+  
+  salmon quant -i ~/github/sucker/differential_expression/data/salmon/index/june_index -l A \
+    -1 $dir/${samp}_1.fq.gz \
+    -2 $dir/${samp}_2.fq.gz \
+    -p 8 --validateMappings --gcBias \
+    -o ~/github/sucker/differential_expression/data/salmon/quant/june/${samp}
+
+done
+```
+
+Utah Lake Utah sucker
+
+```{bash}
+#!/bin/bash
+source ~/miniconda3/bin/activate
+conda activate salmon
+
+for fn in ~/github/sucker/differential_expression/data/rna_seq/utah/*_1.fq.gz;
+do
+  samp=`basename ${fn} _1.fq.gz`
+  echo "Processing sample ${samp}"
+
+  dir=`dirname ${fn}`
+  echo "${dir}"
+  
+  salmon quant -i ~/github/sucker/differential_expression/data/salmon/index/utah_index -l A \
+    -1 $dir/${samp}_1.fq.gz \
+    -2 $dir/${samp}_2.fq.gz \
+    -p 8 --validateMappings --gcBias \
+    -o ~/github/sucker/differential_expression/data/salmon/quant/utah/${samp}
+
+done
+```
+
+Strawberry Reservoir Utah sucker
+
+```{bash}
+#!/bin/bash
+source ~/miniconda3/bin/activate
+conda activate salmon
+
+for fn in ~/github/sucker/differential_expression/data/rna_seq/straw/*_1.fq.gz;
+do
+  samp=`basename ${fn} _1.fq.gz`
+  echo "Processing sample ${samp}"
+
+  dir=`dirname ${fn}`
+  echo "${dir}"
+  
+  salmon quant -i ~/github/sucker/differential_expression/data/salmon/index/straw_index -l A \
+    -1 $dir/${samp}_1.fq.gz \
+    -2 $dir/${samp}_2.fq.gz \
+    -p 8 --validateMappings --gcBias \
+    -o ~/github/sucker/differential_expression/data/salmon/quant/straw/${samp}
+
+done
+```
+
+# Generate DESeqDataSet
+
+## Generate transcript to gene mapping file
+
+This file associates transcripts with gene IDs so that we can quantify expression at the gene-level. 
+
+```{r}
+library(tidyverse)
+
+june_tx2gene <- select(june_final, queryID, geneName)
+colnames(june_tx2gene) <- c('txID', 'geneID')
+
+utah_tx2gene <- select(utah_final, queryID, geneName)
+colnames(utah_tx2gene) <- c('txID', 'geneID')
+
+straw_tx2gene <- select(straw_final, queryID, geneName)
+colnames(straw_tx2gene) <- c('txID', 'geneID')
+
+path <- "./data/transcriptomes/filtered/tx2gene/"
+
+write_tsv(june_tx2gene, paste0(path, "june_tx2gene.tsv"), col_names = T)
+write_tsv(utah_tx2gene, paste0(path, "utah_tx2gene.tsv"), col_names = T)
+write_tsv(straw_tx2gene, paste0(path, "straw_tx2gene.tsv"), col_names = T)
+```
+
+## Transcript abundance files and tximport
+
+Import transcript quantification data using tximport and create gene-level count tables 
+
+```{r}
+library(readr)
+library(tximport)
+
+# Create path to directory including quant.sf files
+
+june_dir <- "./data/salmon/quant/june"
+utah_dir <- "./data/salmon/quant/utah"
+straw_dir <- "./data/salmon/quant/straw"
+
+# Manually create and import table with samples and time columns
+
+june_samples <- read.table(file.path(june_dir, "june_samples.txt"), header = TRUE)
+utah_samples <- read.table(file.path(utah_dir, "utah_samples.txt"), header = TRUE)
+straw_samples <- read.table(file.path(straw_dir, "straw_samples.txt"), header = TRUE)
+
+# Add rownames to samples table
+
+rownames(june_samples) <- june_samples$Sample
+rownames(utah_samples) <- utah_samples$Sample
+rownames(straw_samples) <- straw_samples$Sample
+
+# Create a named vector pointing to the quantification files
+ 
+june_files <- file.path(june_dir, june_samples$Sample, "quant.sf")
+june_names <- paste0(june_samples$Sample)
+names(june_files) <- june_names
+print("June Files")
+all(file.exists(june_files))
+
+utah_files <- file.path(utah_dir, utah_samples$Sample, "quant.sf")
+utah_names <- paste0(utah_samples$Sample)
+names(utah_files) <- utah_names
+print("Utah Files")
+all(file.exists(utah_files))
+
+straw_files <- file.path(straw_dir, straw_samples$Sample, "quant.sf")
+straw_names <- paste0(straw_samples$Sample)
+names(straw_files) <- straw_names
+print("Straw Files")
+all(file.exists(straw_files))
+
+# Import quantification data for DESeq2 using tximport
+june_txi <- tximport(june_files, type = "salmon", tx2gene = june_tx2gene)
+utah_txi <- tximport(utah_files, type = "salmon", tx2gene = utah_tx2gene)
+straw_txi <- tximport(straw_files, type = "salmon", tx2gene = straw_tx2gene)
+
+# Confirm number of rows is the same between different objects
+nrow(june_txi$counts) == 10006
+nrow(utah_txi$counts) == 10006
+nrow(straw_txi$counts) == 10006
+```
+
+## Construct a DESeqDataSet
+
+```{r}
+library(DESeq2)
+
+# Set Time as factor
+june_samples$Time <- factor(june_samples$Time)
+utah_samples$Time <- factor(utah_samples$Time)
+straw_samples$Time <- factor(straw_samples$Time)
+
+# Generate DESeqDataSet 
+june_dds <- DESeqDataSetFromTximport(june_txi,
+                              colData = june_samples,
+                              design = ~ Time)
+utah_dds <- DESeqDataSetFromTximport(utah_txi,
+                              colData = utah_samples,
+                              design = ~ Time)
+straw_dds <- DESeqDataSetFromTximport(straw_txi,
+                              colData = straw_samples,
+                              design = ~ Time)
+```
+
+# Data Transformation and Visualization
+
+## Transformation
+
+Transform count data to aid in visualization 
+
+```{r}
+#RLD Transformation
+june_rld <- rlog(june_dds, blind=TRUE)
+utah_rld <- rlog(utah_dds, blind=TRUE)
+straw_rld <- rlog(straw_dds, blind=TRUE)
+
+```
+
+## Visualization with Principal Component Plot
+
+Perform quality assessment of data prior to differential expression analyses. The PCA plot is particularly useful for identifying potential outliers. 
+
+```{r}
+library(ggpubr)
+library(ggrepel)
+
+june_pca_rld <- plotPCA(june_rld, intgroup="Time") +
+  labs(title = "June") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = .5, size = 10),
+        legend.position = "none", 
+        axis.title = element_text(size = 7), 
+        axis.text = element_text(size = 5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()
+        )
+
+utah_pca_rld <- plotPCA(utah_rld, intgroup="Time") +
+  labs(title = "Utah") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = .5, size = 10),
+        legend.position = "none", 
+        axis.title = element_text(size = 7), 
+        axis.text = element_text(size = 5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()
+        )
+
+straw_pca_rld <- plotPCA(straw_rld, intgroup="Time") +
+  labs(title = "Strawberry") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = .5, size = 10),
+        legend.position = "none", 
+        axis.title = element_text(size = 7), 
+        axis.text = element_text(size = 5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()
+        )
+
+june_pca_rld
+utah_pca_rld
+straw_pca_rld
+
+PCA_Plot <- ggarrange(june_pca_rld, utah_pca_rld, straw_pca_rld, ncol=1, nrow=3, common.legend = TRUE, legend="bottom")
+
+ggsave("./figures/PCA/PCA.pdf", PCA_Plot, height = 8, width = 4)
+```
+
+# Differential Expression Analysis
+
+Run differential expression analysis using DESeq 
+
+```{r}
+# Run Differential Expression Analysis
+
+june_dds <- DESeq(june_dds)
+utah_dds <- DESeq(utah_dds)
+straw_dds <- DESeq(straw_dds)
+
+# Generate DE results by specifying contrast of interest and associated alpha and lfcThreshold values
+
+alpha = .05
+lfcThreshold = 0
+
+june_res_12v9 <- results(june_dds, contrast=c("Time","12","9"), alpha = alpha, lfcThreshold = lfcThreshold)
+utah_res_12v9 <- results(utah_dds, contrast=c("Time","12","9"), alpha = alpha, lfcThreshold = lfcThreshold)
+straw_res_12v9 <- results(straw_dds, contrast=c("Time","12","9"), alpha = alpha, lfcThreshold = lfcThreshold)
+
+june_res_14v9 <- results(june_dds, contrast=c("Time","14","9"), alpha = alpha, lfcThreshold = lfcThreshold)
+utah_res_14v9 <- results(utah_dds, contrast=c("Time","14","9"), alpha = alpha, lfcThreshold = lfcThreshold)
+straw_res_14v9 <- results(straw_dds, contrast=c("Time","14","9"), alpha = alpha, lfcThreshold = lfcThreshold)
+
+june_res_14v12 <- results(june_dds, contrast=c("Time","14","12"), alpha = alpha, lfcThreshold = lfcThreshold)
+utah_res_14v12 <- results(utah_dds, contrast=c("Time","14","12"), alpha = alpha, lfcThreshold = lfcThreshold)
+straw_res_14v12 <- results(straw_dds, contrast=c("Time","14","12"), alpha = alpha, lfcThreshold = lfcThreshold)
+```
+
+## p-values and adjusted p-values
+
+Summarize basic information with summary function.
+
+```{r}
+# Summarize results
+
+summary(june_res_12v9)
+summary(utah_res_12v9)
+summary(straw_res_12v9)
+
+summary(june_res_14v9)
+summary(utah_res_14v9)
+summary(straw_res_14v9)
+
+summary(june_res_14v12)
+summary(utah_res_14v12)
+summary(straw_res_14v12)
+```
+
+Check how many samples had adjusted p-values less than alpha, adjusted p-values != NA, and abs(log2fold change) > lfcThreshold?
+
+```{r}
+# Adjusted p-values for 12v9 contrast
+
+print("June 12v9")
+sum(june_res_12v9$padj < alpha & abs(june_res_12v9$log2FoldChange) > lfcThreshold, na.rm=TRUE)
+print("Utah 12v9")
+sum(utah_res_12v9$padj < alpha & abs(utah_res_12v9$log2FoldChange) > lfcThreshold, na.rm=TRUE)
+print("straw 12v9")
+sum(straw_res_12v9$padj < alpha & abs(straw_res_12v9$log2FoldChange) > lfcThreshold, na.rm=TRUE)
+
+# Adjusted p-values for 14v9 contrast
+
+print("June 14v9")
+sum(june_res_14v9$padj < alpha & abs(june_res_14v9$log2FoldChange) > lfcThreshold, na.rm=TRUE)
+print("Utah 14v9")
+sum(utah_res_14v9$padj < alpha & abs(utah_res_14v9$log2FoldChange) > lfcThreshold, na.rm=TRUE)
+print("straw 14v9")
+sum(straw_res_14v9$padj < alpha & abs(straw_res_14v9$log2FoldChange) > lfcThreshold, na.rm=TRUE)
+
+# Adjusted p-values for 14v12 contrast
+
+print("June 14v12")
+sum(june_res_14v12$padj < alpha & abs(june_res_14v12$log2FoldChange) > lfcThreshold, na.rm=TRUE)
+print("Utah 14v12")
+sum(utah_res_14v12$padj < alpha & abs(utah_res_14v12$log2FoldChange) > lfcThreshold, na.rm=TRUE)
+print("straw 14v12")
+sum(straw_res_14v12$padj < alpha & abs(straw_res_14v12$log2FoldChange) > lfcThreshold, na.rm=TRUE)
+
+```
+
+# Venn Diagrams
+
+Generate Venn Diagrams to visualize gene expression between contrasts of interest
+
+## Generate List of DE Genes
+
+```{r}
+# Gene list for contrast between weeks 12 and 9 (Week 9 is reference)
+
+june_12v9 <- june_res_12v9[which(!is.na(june_res_12v9$padj) & june_res_12v9$padj < alpha & abs(june_res_12v9$log2FoldChange) > lfcThreshold),]@rownames
+utah_12v9 <- utah_res_12v9[which(!is.na(utah_res_12v9$padj) & utah_res_12v9$padj < alpha & abs(utah_res_12v9$log2FoldChange) > lfcThreshold),]@rownames
+straw_12v9 <- straw_res_12v9[which(!is.na(straw_res_12v9$padj) & straw_res_12v9$padj < alpha & abs(straw_res_12v9$log2FoldChange) > lfcThreshold),]@rownames
+
+all_12v9 <- list(June = june_12v9, Utah = utah_12v9, Strawberry = straw_12v9)
+
+# Gene list for contrast between weeks 14 and 9 (Week 9 is reference)
+
+june_14v9 <- june_res_14v9[which(!is.na(june_res_14v9$padj) & june_res_14v9$padj < alpha & abs(june_res_14v9$log2FoldChange) > lfcThreshold),]@rownames
+utah_14v9 <- utah_res_14v9[which(!is.na(utah_res_14v9$padj) & utah_res_14v9$padj < alpha & abs(utah_res_14v9$log2FoldChange) > lfcThreshold),]@rownames
+straw_14v9 <- straw_res_14v9[which(!is.na(straw_res_14v9$padj) & straw_res_14v9$padj < alpha & abs(straw_res_14v9$log2FoldChange) > lfcThreshold),]@rownames
+
+all_14v9 <- list(June = june_14v9, Utah = utah_14v9, Strawberry = straw_14v9)
+
+# Gene list for contrast between weeks 14 and 12 (Week 12 is reference)
+
+june_14v12 <- june_res_14v12[which(!is.na(june_res_14v12$padj) & june_res_14v12$padj < alpha & abs(june_res_14v12$log2FoldChange) > lfcThreshold),]@rownames
+utah_14v12 <- utah_res_14v12[which(!is.na(utah_res_14v12$padj) & utah_res_14v12$padj < alpha & abs(utah_res_14v12$log2FoldChange) > lfcThreshold),]@rownames
+straw_14v12 <- straw_res_14v12[which(!is.na(straw_res_14v12$padj) & straw_res_14v12$padj < alpha & abs(straw_res_14v12$log2FoldChange) > lfcThreshold),]@rownames
+
+all_14v12 <- list(June = june_14v12, Utah = utah_14v12, Strawberry = straw_14v12)
+```
+
+## Generate Venn Diagrams
+
+```{r}
+
+library(ggplot2)
+library(ggVennDiagram)
+library(ggpubr)
+library(gridExtra)
+
+getVenn <- function(list) {
+  
+  vennData <- Venn(list) %>% process_data()
+  
+  myPlot <- ggplot() +
+    # 1. region count layer
+    geom_sf(aes(fill = count), data = venn_region(vennData)) +
+    # 2. set edge layer
+    geom_sf(color = "grey", size = 3, data = venn_setedge(vennData),
+            show.legend = FALSE) +
+    # 3. set label layer
+    geom_sf_text(aes(label = name), data = venn_setlabel(vennData)) +
+    # 4. region label layer
+    geom_sf_label(aes(label = count), data = venn_region(vennData)) +
+    scale_fill_distiller(palette = "Blues", direction = 1) +
+    theme_void() +
+    theme(legend.position = "none")
+  
+  return(myPlot)
+  
+}
+
+venn_12v9 <- getVenn(all_12v9)
+venn_14v9 <- getVenn(all_14v9)
+venn_14v12 <- getVenn(all_14v12)
+
+myPlot <- grid.arrange(venn_12v9, venn_14v9, venn_14v12, ncol = 1)
+
+ggsave("./figures/venn_diagrams/venn_diagrams.pdf", myPlot)
+
+```

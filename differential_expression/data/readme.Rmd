@@ -1,0 +1,18 @@
+---
+title: "readme"
+author: "Peter Searle"
+date: "2023-04-18"
+output: html_document
+---
+
+# Files used for differential expression Analysis
+
+Genetic data needed to run the code is available in NCBI under accession PRJNA818778. 
+
+Description: 
+
+predicted_genes - Predict gene names for transcriptomes generated using EggNOG Mapper in OmicsBox.
+  June_EggNOG.tsv - June sucker
+  Straw_EggNOG.tsv - Strawberry Reservoir Utah sucker
+  Utah_EggNOG.tsv - Utah Lake Utah sucker
+
