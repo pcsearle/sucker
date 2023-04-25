@@ -1,0 +1,14 @@
+---
+title: "readme"
+author: "Peter Searle"
+date: "2023-04-18"
+output: html_document
+---
+
+# Data used for transcriptome assembly and functional annotation
+
+Description: 
+
+files.tsv - Specifies which files go with which lineages 
+
+Genetic data needed to run the code is available in NCBI under accession PRJNA818778. 
