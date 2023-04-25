@@ -5,7 +5,9 @@ date: "2023-04-20"
 output: html_document
 ---
 
-Genetic data needed to run the code is available in NCBI under accession PRJNA818778. Note that the .bam files used for the transcriptome assembly are already demultiplexed because NCBI requested I provide those files, not the original movieX.subreads.bam file (which included 3 samples multiplexed on the same run). You can start this workflow with those files in the "Refine" step. 
+Genetic data needed to run the code is available in NCBI under accession PRJNA818778. Refer to samples.tsv in ./transcriptome_assembly/data/ for information on which files go with which lineages. 
+
+Note that the .bam files used for the transcriptome assembly are already demultiplexed because NCBI requested I provide those files, not the original movieX.subreads.bam file (which included 3 samples multiplexed on the same run). You can start this workflow with those files in the "Refine" step. 
 
 # Assembly
 
@@ -181,7 +183,7 @@ bamtools convert -format fasta -in ccs.bam > ccs.fasta
 
 # Error Correction
 
-LoRDEC is used to error correct PacBio assemblies with RNA_seq reads 
+LoRDEC is used to error correct PacBio assemblies with RNA-seq reads. Be sure to match these files according to lineage. Refer to samples.tsv in ./transcriptome_assembly/data/. 
 
 ## Installation
 
@@ -202,7 +204,9 @@ Output: file1_R1.trimmed.fastq.gz file1_R2.trimmed.fastq.gz
 
 ```{bash}
 
-trim_galore --paired --fastqc file1_R1.fastq.gz file1_R2.fastq.gz 
+trim_galore --paired --fastqc file1.1_R1.fastq.gz file1.1_R2.fastq.gz 
+trim_galore --paired --fastqc file1.2_R1.fastq.gz file1.2_R2.fastq.gz 
+trim_galore --paired --fastqc file1.3_R1.fastq.gz file1.3_R2.fastq.gz 
 
 ```
 
@@ -214,7 +218,9 @@ Output: movieX.1.corrected.fasta.gz
 ```{bash}
 # To get this to work, I had to include the names of all the .fastq.gz files on the same line. This script only lists two file names.
 
-lordec-correct -2 file1_R1.trimmed.fastq.gz, file1_R2.trimmed.fastq.gz -k 21 -s 3 -i movieX.flnc.1.clustered.hq.fasta.gz -o movieX.1.corrected.fasta.gz
+lordec-correct -2 file1.1_R1.trimmed.fastq.gz, file1.1_R2.trimmed.fastq.gz -k 21 -s 3 -i movieX.flnc.1.clustered.hq.fasta.gz -o movieX.1.corrected.fasta.gz
+lordec-correct -2 file1.2_R1.trimmed.fastq.gz, file1.2_R2.trimmed.fastq.gz -k 21 -s 3 -i movieX.flnc.2.clustered.hq.fasta.gz -o movieX.2.corrected.fasta.gz
+lordec-correct -2 file1.3_R1.trimmed.fastq.gz, file1.3_R2.trimmed.fastq.gz -k 21 -s 3 -i movieX.flnc.3.clustered.hq.fasta.gz -o movieX.3.corrected.fasta.gz
 
 ```
 
