@@ -1,0 +1,406 @@
+---
+title: "Transcriptome_Assembly_Annotation"
+author: "Peter Searle"
+date: "2023-04-20"
+output: html_document
+---
+
+Genetic data needed to run the code is available in NCBI under accession PRJNA818778. Note that the .bam files used for the transcriptome assembly are already demultiplexed because NCBI requested I provide those files, not the original movieX.subreads.bam file (which included 3 samples multiplexed on the same run). You can start this workflow with those files in the "Refine" step. 
+
+# Assembly
+
+## Installation
+
+### Miniconda3
+
+```{bash}
+
+wget https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh
+bash Miniconda3-py39_4.9.2-Linux-x86_64.sh 
+source ~/miniconda3/bin/activate 
+```
+
+### IsoSeq3
+
+Transcriptomes were assembled using the IsoSeq3 (v3.4.0) protocol
+
+```{bash}
+
+source ~/miniconda3/bin/activate 
+
+conda create -n isoseq
+conda activate isoseq
+
+conda install pbccs
+conda install isoseq3
+conda install lima
+conda install pbbam
+conda install samtools
+
+```
+
+### seqstats
+
+Used to generate summary statistics
+
+```{bash}
+
+#seqstats
+
+git clone --recursive https://github.com/clwgg/seqstats
+
+cd seqstats
+make
+
+#bamtools
+
+conda install -c bioconda bamtools
+
+```
+
+## Consensus Generation
+
+Generate circular consensus sequences (CCS). The only effective way to perform this task is to parallelize the process on multiple nodes.
+
+Input: movieX.subreads.bam
+Output: movieX.ccs.bam
+
+### Parallelize CCS (chunking)  (1-3 days)
+
+```{bash}
+
+srun -N 1 ccs  movieX.subreads.bam movieX.ccs.1.bam --chunk 1/10 &
+srun -N 1 ccs  movieX.subreads.bam movieX.ccs.2.bam --chunk 2/10 &
+srun -N 1 ccs  movieX.subreads.bam movieX.ccs.3.bam --chunk 3/10 &
+srun -N 1 ccs  movieX.subreads.bam movieX.ccs.4.bam --chunk 4/10 &
+srun -N 1 ccs  movieX.subreads.bam movieX.ccs.5.bam --chunk 5/10 &
+srun -N 1 ccs  movieX.subreads.bam movieX.ccs.6.bam --chunk 6/10 &
+srun -N 1 ccs  movieX.subreads.bam movieX.ccs.7.bam --chunk 7/10 &
+srun -N 1 ccs  movieX.subreads.bam movieX.ccs.8.bam --chunk 8/10 &
+srun -N 1 ccs  movieX.subreads.bam movieX.ccs.9.bam --chunk 9/10 &
+srun -N 1 ccs  movieX.subreads.bam movieX.ccs.10.bam --chunk 10/10 &
+wait
+
+```
+
+### Merge Chunks and Index (2 hours)
+
+```{bash}
+
+pbmerge -o movieX.ccs.bam movieX.ccs.*.bam
+pbindex movieX.ccs.bam
+
+```
+
+## Demultiplex primers  (~10 min)
+
+Remove primers and identify barcodes
+
+Input: movieX.ccs.bam, primers.fasta
+Output: movieX.fl.bam (if multiple samples, will be demultiplexed)
+
+primers_barcodes.fasta
+>bc1001_5p
+CACATATCAGAGTGCGGCAATGAAGTCGCAGGGTTGGGG
+>bc1002_5p
+ACACACAGACTGTGAGGCAATGAAGTCGCAGGGTTGGGG
+>bc1003_5p
+ACACATCTCGTGAGAGGCAATGAAGTCGCAGGGTTGGGG
+>bc1001_3p
+GTACTCTGCGTTGATACCACTGCTTCGCACTCTGATATGTG
+>bc1002_3p
+GTACTCTGCGTTGATACCACTGCTTCTCACAGTCTGTGTGT
+>bc1003_3p
+GTACTCTGCGTTGATACCACTGCTTCTCTCACGAGATGTGT
+
+```{bash}
+
+lima movieX.ccs.bam primers_barcodes.fasta movieX.fl.bam --isoseq --peek-guess
+
+```
+
+## Refine (~10 min) 
+
+Trim off poly(A) tails and remove concatemers
+
+Input: movieX.fl.bam (3 files)
+Output: movieX.flnc.bam (3 files)
+
+```{bash}
+
+isoseq3 refine movieX.fl.1.bam primers_barcodes.fasta movieX.flnc.1.bam --require-polya
+
+isoseq3 refine movieX.fl.2.bam primers_barcodes.fasta movieX.flnc.2.bam --require-polya
+
+isoseq3 refine movieX.fl.3.bam primers_barcodes.fasta movieX.flnc.3.bam --require-polya
+```
+
+## Cluster (~4 hrs) 
+
+Perform clustering to reduce sequence redundancy 
+
+Input: movieX.flnc.bam (3 files)
+Output: (3 of each file)
+<prefix>.bam
+<prefix>.hq.fasta.gz with predicted accuracy ≥ 0.99
+<prefix>.lq.fasta.gz with predicted accuracy < 0.99
+<prefix>.bam.pbi
+<prefix>.transcriptset.xml
+
+```{bash}
+
+isoseq3 cluster movieX.flnc.1.bam movieX.flnc.1.clustered.bam --verbose --use-qvs
+
+isoseq3 cluster movieX.flnc.2.bam movieX.flnc.2.clustered.bam --verbose --use-qvs
+
+isoseq3 cluster movieX.flnc.3.bam movieX.flnc.3.clustered.bam --verbose --use-qvs
+
+```
+
+## Generate Summary Statistics (<1 min)
+
+Seqstats can be used to generate summary statistics for each step of the assembly. For the first three isoseq3 steps, bam files must be converted to fasta files for seqstats to work.  
+
+Input: movieX.flnc.clustered.hq.fasta.gz 
+Output: movieX.flnc.clustered.hq.stats.txt
+
+```{bash}
+
+# Convert bam to fasta if needed
+
+bamtools convert -format fasta -in ccs.bam > ccs.fasta
+
+# Run seqstats 
+# Outputs Total n, Total seq, Avg. seq, Median seq, N 50, Min seq and Max seq
+
+~/seqstats/seqstats movieX.flnc.1.clustered.hq.fasta.gz > movieX.flnc.1.clustered.hq.stats.txt
+~/seqstats/seqstats movieX.flnc.2.clustered.hq.fasta.gz > movieX.flnc.2.clustered.hq.stats.txt
+~/seqstats/seqstats movieX.flnc.3.clustered.hq.fasta.gz > movieX.flnc.3.clustered.hq.stats.txt
+
+```
+
+# Error Correction
+
+LoRDEC is used to error correct PacBio assemblies with RNA_seq reads 
+
+## Installation
+
+```{bash}
+
+conda install -c bioconda trim-galore
+conda install cutadapt
+conda install -c bioconda lordec
+
+```
+
+## TrimGalore 
+
+Prepare short reads for LoRDEC by performing quality and adapter trimming with TrimGalore
+
+Input: file1_R1.fastq.gz, file1_R2.fastq.gz
+Output: file1_R1.trimmed.fastq.gz file1_R2.trimmed.fastq.gz
+
+```{bash}
+
+trim_galore --paired --fastqc file1_R1.fastq.gz file1_R2.fastq.gz 
+
+```
+
+## LoRDEC
+
+Input: file1_R1.trimmed.fastq.gz, file1_R2.trimmed.fastq.gz, movieX.flnc.1.clustered.hq.fasta.gz
+Output: movieX.1.corrected.fasta.gz
+
+```{bash}
+# To get this to work, I had to include the names of all the .fastq.gz files on the same line. This script only lists two file names.
+
+lordec-correct -2 file1_R1.trimmed.fastq.gz, file1_R2.trimmed.fastq.gz -k 21 -s 3 -i movieX.flnc.1.clustered.hq.fasta.gz -o movieX.1.corrected.fasta.gz
+
+```
+
+# Clustering
+
+Next we cluster again, this time using cd-hit-est to further reduce sequence redundancy 
+
+## Installation
+
+```{bash}
+
+conda install -c bioconda cd-hit
+
+```
+
+## cd-hit-est
+
+Input: movieX.1.corrected.fasta
+Output: moxieX.1.cd_hit_est.fasta
+
+```{bash}
+#!/bin/bash
+
+cd-hit-est -i movieX.1.corrected.fasta -o moxieX.1.cd_hit_est.fasta -M 0 -T 6
+cd-hit-est -i movieX.2.corrected.fasta -o moxieX.2.cd_hit_est.fasta -M 0 -T 6
+cd-hit-est -i movieX.3.corrected.fasta -o moxieX.3.cd_hit_est.fasta -M 0 -T 6
+
+```
+
+# Contamination
+
+Diamond can be used to check for contamination by rapidly blasting sequences. See "Functional Annotation" section for additional details.
+
+Input: movieX.1.cd_hit_est.fasta
+Output: movieX.1.diamond.nr.xml
+
+# Transcriptome Quality Assessment 
+
+Assess the quality of the assemblies using BUSCO
+
+Input: movieX.1.cd_hit_est.fixed.fasta
+Output: short_summary.specific.actinopterygii_odb10.movieX.1.txt, as well as graph
+
+BUSCO will not accept files with / present. Use the following command to replace / with _.
+
+```{bash}
+
+cp movieX.1.cd_hit_est.fasta movieX.1.cd_hit_est.fixed.fasta
+
+sed -i 's/\//_/g' movieX.1.cd_hit_est.fixed.fasta
+
+```
+
+## Installation
+
+```{bash}
+
+#BUSCO requires a decent amount of dependencies 
+
+conda install -c bioconda -c conda-forge busco=5.1.2
+conda install -c conda-forge biopython
+conda install pandas
+conda install -c bioconda augustus
+conda install -c bioconda metaeuk
+conda install -c bioconda prodigal
+conda install -c bioconda hmmer
+conda install -c bioconda sepp
+conda install -c conda-forge r-base
+conda install -c r r-ggplot2
+
+# Must download lineage file if want to run BUSCO offline
+
+wget https://busco-data.ezlab.org/v5/data/lineages/actinopterygii_odb10.2021-02-19.tar.gz
+tar zxpf actinopterygii_odb10.2021-02-19.tar.gz 
+
+```
+
+## BUSCO
+
+```{bash}
+
+#Run BUSCO
+
+busco -m transcriptome -i movieX.1.cd_hit_est.fixed.fasta -o busco_results -l actinopterygii_odb10 --offline
+
+#Generate BUSCO graph
+
+mkdir BUSCO_summaries
+
+cp short_summary.specific.actinopterygii_odb10.movieX.1.txt BUSCO_summaries/short_summary.specific.actinopterygii_odb10.movieX.1.txt
+
+cp short_summary.specific.actinopterygii_odb10.movieX.2.txt BUSCO_summaries/short_summary.specific.actinopterygii_odb10.movieX.2.txt
+
+cp short_summary.specific.actinopterygii_odb10.movieX.3.txt BUSCO_summaries/short_summary.specific.actinopterygii_odb10.movieX.3.txt
+
+python3 ~/miniconda3/pkgs/busco-5.1.2-py_0/python-scripts/generate_plot.py -wd BUSCO_summaries/
+
+```
+
+# Functional Annotation
+
+Functional Annotation was completed in OmicsBox. However, because the transcriptomes were so large OmicsBox could not handle running blast and InterProScan. These programs were run independently and then the results were imported into OmicsBox for additional analyses. 
+
+## Installation
+
+### Diamond
+
+```{bash}
+
+conda install -c bioconda diamond
+
+# Prepare database with these files if want to include taxonomy features
+
+wget ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/accession2taxid/prot.accession2taxid.FULL.gz
+wget ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdmp.zip
+
+# Download NonRedundant Protein Database
+
+wget https://ftp.ncbi.nlm.nih.gov/blast/db/FASTA/nr.gz
+
+```
+
+### fasta-splitter
+
+```{bash}
+
+wget http://kirill-kryukov.com/study/tools/fasta-splitter/files/fasta-splitter-0.2.6.zip
+unzip fasta-splitter-0.2.6.zip
+
+```
+
+### InterProScan
+
+Requires quite a few steps for proper installation. Refer to  https://interproscan-docs.readthedocs.io/en/latest/InstallationRequirements.html for detailed instructions.
+
+## Diamond
+
+Diamond uses sequence similarity for functional annotation.
+
+Input: movieX.1.cd_hit_est.fasta
+Output: movieX.1.diamond.nr.xml
+
+```{bash}
+
+# Make database
+
+diamond makedb --in nr.gz --db nr --taxonmap prot.accession2taxid.FULL.gz --taxonnodes nodes.dmp --taxonnames names.dmp
+
+# Run Diamond
+
+diamond blastx --db nr/ -q moxieX.1.cd_hit_est.fasta --out movieX.1.diamond.nr.xml --outfmt 5 --max-target-seqs 1
+
+diamond blastx --db nr/ -q moxieX.2.cd_hit_est.fasta --out movieX.2.diamond.nr.xml --outfmt 5 --max-target-seqs 1
+
+diamond blastx --db nr/ -q moxieX.3.cd_hit_est.fasta --out movieX.3.diamond.nr.xml --outfmt 5 --max-target-seqs 1
+
+```
+
+## InterProScan
+
+InterProScan uses protein signatures for functional annotation.  
+
+Before running InterProScan you need to chunk the fasta files using fasta-splitter. This will improve the performance when analyzing nucleic acid sequences
+
+Input: moxieX.1.cd_hit_est.fasta
+Output: movieX.1.part-1.fasta
+
+```{bash}
+
+#fasta-splitter
+
+fasta-splitter.pl --part-size 5000 --measure count moxieX.1.cd_hit_est.fasta
+fasta-splitter.pl --part-size 5000 --measure count moxieX.2.cd_hit_est.fasta
+fasta-splitter.pl --part-size 5000 --measure count moxieX.3.cd_hit_est.fasta
+
+```
+
+Then run InterProScan with these chunked files
+
+Input: moxieX.1.cd_hit_est.part.fasta
+Output: movieX.1.part-1.fasta.xml
+
+```{bash}
+
+# This script only includes one file (part), but all parts need to be run
+
+interproscan.sh -t n -i movieX.1.cd_hit_est.part-1.fasta
+
+```
