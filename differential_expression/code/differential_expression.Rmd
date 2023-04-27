@@ -134,8 +134,6 @@ sed -i '/^$/d' *.lst
 
 Use seqtk to filter assembled transcriptomes using parameters described above. This creates transcriptomes that are comparable between lineages. Transcriptomes are available on NCBI under BioProject PRJNA818778. 
 
-**Here could figure out how to bring data in from NCBI**
-
 ```{bash}
 #!/bin/bash
 source ~/miniconda3/bin/activate 
@@ -151,7 +149,7 @@ cd ~/github/sucker/differential_expression/data/transcriptomes/filtered/transcri
 
 seqtk subseq ~/github/sucker/differential_expression/data/transcriptomes/unfiltered/june_transcripts.fasta june_transcripts.lst > ../filtered_transcripts/june_filtered_transcripts.fasta
 seqtk subseq ~/github/sucker/differential_expression/data/transcriptomes/unfiltered/utah_transcripts.fasta utah_transcripts.lst > ../filtered_transcripts/utah_filtered_transcripts.fasta
-seqtk subseq ~/github/sucker/differential_expression/data/transcriptomes/unfiltered/utah_transcripts.fasta utah_transcripts.lst > ../filtered_transcripts/utah_filtered_transcripts.fasta
+seqtk subseq ~/github/sucker/differential_expression/data/transcriptomes/unfiltered/straw_transcripts.fasta straw_transcripts.lst > ../filtered_transcripts/straw_filtered_transcripts.fasta
 ```
 
 # Quantify Transcript Abundance with Salmon
@@ -296,11 +294,11 @@ Import transcript quantification data using tximport and create gene-level count
 library(readr)
 library(tximport)
 
-# Create path to directory including quant.sf files
+# Create path to directory including sample files
 
-june_dir <- "./data/salmon/quant/june"
-utah_dir <- "./data/salmon/quant/utah"
-straw_dir <- "./data/salmon/quant/straw"
+june_dir <- "./data/sample_info"
+utah_dir <- "./data/sample_info"
+straw_dir <- "./data/sample_info"
 
 # Manually create and import table with samples and time columns
 
@@ -313,6 +311,12 @@ straw_samples <- read.table(file.path(straw_dir, "straw_samples.txt"), header = 
 rownames(june_samples) <- june_samples$Sample
 rownames(utah_samples) <- utah_samples$Sample
 rownames(straw_samples) <- straw_samples$Sample
+
+# Create path to directory including quant.sf files
+
+june_dir <- "./data/salmon/quant/june"
+utah_dir <- "./data/salmon/quant/utah"
+straw_dir <- "./data/salmon/quant/straw"
 
 # Create a named vector pointing to the quantification files
  
@@ -386,8 +390,8 @@ straw_rld <- rlog(straw_dds, blind=TRUE)
 Perform quality assessment of data prior to differential expression analyses. The PCA plot is particularly useful for identifying potential outliers. 
 
 ```{r}
-library(ggpubr)
 library(ggrepel)
+library(ggpubr)
 
 june_pca_rld <- plotPCA(june_rld, intgroup="Time") +
   labs(title = "June") +
@@ -550,7 +554,7 @@ all_14v12 <- list(June = june_14v12, Utah = utah_14v12, Strawberry = straw_14v12
 
 library(ggplot2)
 library(ggVennDiagram)
-library(ggpubr)
+#library(ggpubr)
 library(gridExtra)
 
 getVenn <- function(list) {
@@ -581,6 +585,6 @@ venn_14v12 <- getVenn(all_14v12)
 
 myPlot <- grid.arrange(venn_12v9, venn_14v9, venn_14v12, ncol = 1)
 
-ggsave("./figures/venn_diagrams/venn_diagrams.pdf", myPlot)
+ggsave("./figures/venn_diagram/venn_diagrams.pdf", myPlot)
 
 ```

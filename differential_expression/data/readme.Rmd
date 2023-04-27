@@ -7,8 +7,6 @@ output: html_document
 
 # Files used for differential expression Analysis
 
-Genetic data needed to run the code is available in NCBI under accession PRJNA818778. 
-
 Description: 
 
 predicted_genes - Predict gene names for transcriptomes generated using EggNOG Mapper in OmicsBox.
@@ -16,3 +14,16 @@ predicted_genes - Predict gene names for transcriptomes generated using EggNOG M
   Straw_EggNOG.tsv - Strawberry Reservoir Utah sucker
   Utah_EggNOG.tsv - Utah Lake Utah sucker
 
+sample_info - Information of which RNA-seq files go with which week for Salmon analysis. When the files are downloaded from NCBI, they need to be renamed to match the names in these files. 
+  june_samples.txt - June sucker
+  straw_samples.txt - Strawberry Reservoir Utah sucker
+  utah_samples.txt - Utah Lake Utah sucker
+
+transcriptomes > unfiltered
+  june_transcripts.fasta.gz - June sucker
+  straw_transcripts.fasta.gz - Strawberry Reservoir Utah sucker
+  utah_transcripts.fasta.gz - Utah Lake Utah sucker
+
+The assembled transcriptomes on NCBI are slightly different than the assembled transcriptomes available in this repository. NCBI required several changes (i.e., removal of sequences < 200 bp and UniVec vector removal) to the original files. Using both files produces very similar results. However, to be consistent with what is shown in the manuscript, I use the original transcriptomes before they were processed by NCBI. The files need to be unzipped before running the analyses.
+
+NCBI processed transcriptomes and RNA-Seq data is available on NCBI under accession PRJNA818778. Refer to Supplementary Table S3 for additional information on which samples are associated with which week and species.
