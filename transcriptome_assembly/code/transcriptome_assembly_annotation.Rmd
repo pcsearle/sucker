@@ -1,11 +1,11 @@
----
+ ---
 title: "Transcriptome_Assembly_Annotation"
 author: "Peter Searle"
 date: "2023-04-20"
 output: html_document
 ---
 
-Genetic data needed to run the code is available in NCBI under accession PRJNA818778. Refer to samples.tsv in ./transcriptome_assembly/data/ for information on which files go with which lineages. 
+Genetic data needed to run the code is available in NCBI under accession PRJNA818778. Refer to supplementary table S3 for information on which files go with which lineages. 
 
 Note that the .bam files used for the transcriptome assembly are already demultiplexed because NCBI requested I provide those files, not the original movieX.subreads.bam file (which included 3 samples multiplexed on the same run). You can start this workflow with those files in the "Refine" step. 
 
@@ -183,7 +183,7 @@ bamtools convert -format fasta -in ccs.bam > ccs.fasta
 
 # Error Correction
 
-LoRDEC is used to error correct PacBio assemblies with RNA-seq reads. Be sure to match these files according to lineage. Refer to samples.tsv in ./transcriptome_assembly/data/. 
+LoRDEC is used to error correct PacBio assemblies with RNA-seq reads. Be sure to match these files according to lineage. Refer to supplementary table S3 for information on which files go with which lineages. 
 
 ## Installation
 
