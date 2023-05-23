@@ -16,7 +16,6 @@ abcdef_complete.xlsx - Variables file for SAS analysis.
   Species: 1 = June Sucker, 2 = Utah Lake Utah Sucker, 3 = Strawberry Reservoir Utah sucker 
   Time: Some fish were collected multiple times in a week
   Week: Some fish were collected multiple times in a week
-  CS: Centroid Size 
 abcdef_Links.NTS - Links file
 abcdef_RWs.NTS - Relative warps from tpsRelw
 abcdef_Sliders.NTS - Semi-landmarks file
