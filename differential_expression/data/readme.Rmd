@@ -5,7 +5,7 @@ date: "2023-04-18"
 output: html_document
 ---
 
-# Files used for differential expression Analysis
+# Files used for differential expression analysis
 
 Description: 
 
@@ -26,4 +26,4 @@ transcriptomes > unfiltered
 
 The assembled transcriptomes on NCBI are slightly different than the assembled transcriptomes available in this repository. NCBI required several changes (i.e., removal of sequences < 200 bp and UniVec vector removal) to the original files. Using both files produces very similar results. However, to be consistent with what is shown in the manuscript, I use the original transcriptomes before they were processed by NCBI. The files need to be unzipped before running the analyses.
 
-NCBI processed transcriptomes and RNA-Seq data is available on NCBI under accession PRJNA818778. Refer to Supplementary Table S3 for additional information on which samples are associated with which week and species.
+NCBI processed transcriptomes and RNA-Seq data is available on NCBI under accession PRJNA818778. Refer to ~/transcriptome_assembly/data/Genetic_Samples.xlsx for additional information on which samples are associated with which week and species.

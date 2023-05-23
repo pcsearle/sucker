@@ -12,7 +12,7 @@ The following codes sets the working directory for all subsequent code chunks
 ```{r setup, include=FALSE, echo=FALSE}
 
 require("knitr")
-opts_knit$set(root.dir = "/home/searleps/Sucker/Geometric_Morphometrics/Morphometrics/Premaxilla/")
+opts_knit$set(root.dir = "~/github/sucker/morphometrics/Premaxilla")
 
 ```
 
@@ -29,8 +29,6 @@ Import results from SAS
 
 library(tidyverse)
 library(readxl)
-
-setwd("/home/searleps/Sucker/Geometric_Morphometrics/Premaxilla/")
 
 analysis <- read.delim(file = "./data/JU_Sp_Week_Gross.txt", sep = " ", header = FALSE) %>% as_tibble()
 
@@ -425,11 +423,11 @@ getTPS(UvS_fit, UvS_Ldmrk, UvS_divergence, "UvS", links)
 
 ```
 
-# Length
+# Total Premaxilla Length
 
-The following plot is of the length of the vertical and lateral limbs of the premaxilla. It shows that premaxilla size changes during development.
+The following plot is of the total length of the premaxilla (sum of lengths of the vertical and lateral limbs). 
 
-## Determine interlandmark distance 
+## Determine interlandmark distances
 
 ```{r}
 library(geomorph)
@@ -457,18 +455,15 @@ all <- full_join(lineardists, variables) %>% mutate(Combo = case_when(Week == 3 
                                                                  Week == 11 | Week == 12 ~ 12,
                                                                  Week == 13 | Week == 14 ~ 14))
 
-vertical <- group_by(all, Species, Combo) %>% summarise(vMean = mean(vertical), vSd = sd(vertical))
+# Sum vertical and lateral limb length
 
-lateral <- group_by(all, Species, Combo) %>% summarise(lMean = mean(lateral), lSd = sd(lateral))
+all <- mutate(all, total = vertical + lateral) 
 
-comboWks <- full_join(vertical, lateral) %>% mutate(Spcs = factor(Species, c(1, 2, 3), c("June", "Utah", "Strawberry")))
+all <-  mutate(all, Spcs = factor(Species, c(1, 2, 3), c("June", "Utah", "Strawberry")))
 
-# Ratios
-# If the ratio of these is similar, that indicates that the shape (i.e., lengths of landmarks) is roughly the same
+# Generate means and confidence intervals 
 
-comboWks <- mutate(comboWks, ratio = vMean/lMean)
-
-comboWks$Combo <- as.factor(comboWks$Combo)
+all <- all %>% group_by(Spcs, Combo) %>% summarise(Mean_TL = mean(total), Upper_TL = mean(total) + (sd(total)/sqrt(n()) *1.96), Lower_TL = mean(total) - (sd(total)/sqrt(n()) *1.96))
 
 ```
 
@@ -481,23 +476,29 @@ library(ggrepel)
 library(viridis)
 library(yarr)
 
-# Vertical vs. Lateral Length
+# Total length
 
-myPlot <- ggplot(comboWks, aes(lMean, vMean)) +
-  geom_point(aes(color = Spcs, shape = Combo)) +
-  geom_path(aes(color = Spcs)) +
-  xlab("Lateral") +
-  ylab("Vertical") +
-  geom_errorbar(aes(ymin=vMean-vSd, ymax=vMean+vSd), width = .1, color = gray(0, .1)) +
-  geom_errorbar(aes(xmin=lMean-lSd, xmax=lMean+lSd), width = .1, color = gray(0, .1)) +
-  scale_colour_discrete("Species") +
-  scale_shape_discrete("Week") +
+myPlot <- ggplot(all, aes(x=Combo, y=Mean_TL, color = Spcs)) +
+  geom_errorbar(aes(ymax = Upper_TL, ymin = Lower_TL), linetype = 1, width = .3, 
+                position=position_dodge(width=0.5)) +
+  geom_point(size = 2, position=position_dodge(width=0.5)) +
   scale_color_viridis(discrete=TRUE, end = .8) +
-  coord_fixed(ratio = 1) +
+  geom_line(position=position_dodge(width=0.5), size = .3) +
+  ylab("Total Length (\u00B5m)")+
+  scale_x_continuous(name="Developmental Week", breaks=c(4,6,8,10,12,14), limits=c(3.75,14.25)) +
   theme_bw() +
-  theme(panel.grid = element_blank())
-
-myPlot
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        axis.title.x = element_text(size = 16, face = "bold", margin=margin(10,0,0,0)),
+        axis.text.x = element_text(size = 12, margin=margin(5,0,0,0)),
+        axis.title.y = element_text(size = 16, face = "bold", margin=margin(0,10,0,0)),
+        axis.text.y = element_text(size = 12, margin=margin(0,5,0,0)),
+        legend.title = element_blank(), legend.text = element_text(size=14),
+        legend.background = element_blank(), legend.margin = margin(c(1,6,1,0)),
+        panel.grid.major.y = element_line(), panel.spacing.x = unit(0, "line"),
+        panel.border = element_rect(size = .25), legend.key=element_blank(), 
+        axis.line.x.bottom = element_line(color = 'black', size = .25),
+        axis.line.y.left   = element_line(color = 'black', size = .25),
+        axis.line.y.right  = element_line(color = 'black', size = .25))
 
 ggsave("./plots/Length/Premaxilla_Length.pdf", myPlot, height = 7, width = 7, units = "in")
 
