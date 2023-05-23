@@ -1,14 +1,14 @@
-The following file is the SAS code used in the geometric morphometric analysis of head shape
+#The following file is the SAS code used in the geometric morphometric analysis of premaxilla shape
 
-# File Prep
+#File Prep
 
-Excel File > .txt file (space delimited)
-In SAS, missing values must be a ‘.’
-RWs file .nts > Remove up to first RW > Save as .txt (space delimited), already ordered correctly
+#Excel File > .txt file (space delimited)
+#In SAS, missing values must be a ‘.’
+#RWs file .nts > Remove up to first RW > Save as .txt (space delimited), already ordered correctly
 
-## Import Files
+#Import Files
 
-# Variable File
+#Variable File
 FILENAME IN3 'abc_complete.TXT';
 DATA RAW3;INFILE IN3;
 INPUT name $ ID sp time week;
@@ -21,16 +21,15 @@ DROP RW7-RW12;
 *RW1-6 account for 96.77% of variation; 
 
 # Merge data files using match merge to generate a combined data set
-# Merge weeks to increase sample size
 DATA ALL2;MERGE RAW3 RAW4;
-*If week=1 then week=0;
-*if week=3 then week=2;
-*if week=5 then week=4;
-*if week=7 then week=6;
-*if week=9 then week=8;
-*if week=11 then week=10;
-*if week=13 then week=12;
-*if week=14 then week=12;
+
+# Merge weeks to increase sample size
+if week=3 then week=4;
+if week=5 then week=6;
+if week=7 then week=8;
+if week=9 then week=10;
+if week=11 then week=12;
+if week=13 then week=14;
 RUN;
 
 # Data must be sorted prior to analysis
@@ -38,28 +37,11 @@ proc sort data=all2;
 by ID sp week;
 run;
 
-## Check for Errors
-
-# Proc print: Not included, but can be used to visualize any mistakes
-*proc print data=all;
-*var loc area rw1 lr;
-*run;
-
-# proc plot: Not included, but can be used to visualize any mistakes
-*proc means data=all n mean stderr uclm lclm stddev;
-*var cs;
-*by loc;
-*run;
-
 # Multivariate Linear Mixed Analysis
 
-## Prepare Data
-
-# Prepares data for multivariate linear mixed analysis. Analogous to a repeated measures design 
-* the following procedure is required to get the data in the correct format to use the repeated measures approach;
+#Prepare Data
 PROC TRANSPOSE DATA=ALL2 OUT=ALLT2 NAME=OLDRW PREFIX=RW;
 BY ID sp week;
-# ‘By’ variables occur on every single line
 VAR RW1-RW6;
 RUN;
 
@@ -69,26 +51,11 @@ BY ID sp week;
 RUN;
 ods graphics on;
 
-## Mixed Model
-
-# Method = maximum likelihood
-# covtest = covariance test
-# Plots of residual panel allows us to see if they meet assumptions of multivariate linear model
+#Mixed Model
 PROC MIXED DATA=ALLT2 method=ml covtest plots=residualpanel;
 CLASS ID sp week oldrw;
-# Include random effects and fixed effects
-# ID = random effect (repeated effect)
-# Oldrw = index variable
 MODEL RW1 = sp week oldrw sp*oldrw week*oldrw sp*week*oldrw/DDFM=KENWARDROGER SOLUTION;
-*RANDOM LOC;
-# Index variable allows us to match up relative warps. Mean of all relative warps = 0
-# Interaction = analogous to treatment by time interaction in repeated measures. If we want to know if CS is a significant predictor in shape on at least some RW’s then use cs*oldrw
-# Degrees of freedom method = KenwardRoger – algorithm that calculates degrees of freedom
-# Can say Random ID (see above), but can lead to inestimable response.
-# Specifies a structure. Specifies that ID is a random effect. This line is the mixed part of the model
-# TYPE = VC (variance components). If use default (TYPE = unk), SAS will get clogged up and gives up an inestimable response. For PC’s type = VC seems to be a reasonable estimate. Gives it a starting point.
 REPEATED/SUBJECT=ID TYPE=VC GROUP=OLDRW;
-# Values I am interested in looking at 
 lsmeans sp*oldrw/cl;
 lsmeans week*oldrw/cl;
 lsmeans sp*week*oldrw/cl;
