@@ -158,40 +158,44 @@ seqtk subseq ~/github/sucker/differential_expression/data/transcriptomes/unfilte
 
 In order to make the transcriptomes comparable among lineages (i.e., each gene has the same number of transcripts represented), additional filtering and clustering is required. 
 
-Extract all the transcripts associated with each gene from each lineage's transcriptomes and combine the transcripts into a fasta file.
-
 ```{bash}
 #!/bin/bash
 
-conda activate seqtk
+# Issue with gene named '26-29-p' with seqtk. Renaming it solves the problem. Filtering ends of removing this gene in the end, so it doesn't need to be renamed later.
 
-# Issue with 26-29-p gene for some reason. Renaming it seems to solve problem
+cd ~/github/sucker/differential_expression/data/transcriptomes/filtered/tx2gene/
 
-cd ~/github/sucker/differential_expression/data/transcriptomes/filtered/filtered_transcripts/
-
-sed -i 's/26-29-p/twentysixtwentyninep/g' *.fasta
+sed -i 's/26-29-p/twentysixtwentyninep/g' *.tsv
 
 cd ~/github/sucker/differential_expression/data/predicted_genes/
 
 sed -i 's/26-29-p/twentysixtwentyninep/g' common_genes.txt
 
-cd ~/github/sucker/differential_expression/data/transcriptomes/filtered/duplicate_genes/
+```
 
-printf "Extracting transcripts using seqtk for each gene\n"
+```{bash}
+#!/bin/bash
+conda activate seqtk
+
+cd ~/github/sucker/differential_expression/data/transcriptomes/filtered/multi_transcripts/
+
+> logs/seqtk1.log
+
+printf "Extracting transcripts using seqtk for each gene\n" >> logs/seqtk1.log
 
 count=1
 
-cat ~/github/sucker/differential_expression/data/predicted_genes/common_genes.txt | while read gene;
+cat ../../../predicted_genes/common_genes1.txt | while read gene;
 do
-  printf "Processing $gene $count\n"
+  printf "Processing $gene $count\n" >> logs/seqtk1.log
   let count++
   > ${gene}.unfltr.fa
-  for file in ~/github/sucker/differential_expression/data/transcriptomes/filtered/tx2gene/*.tsv;
+  for file in ../tx2gene/*.tsv;
   do
     samp=`basename ${file} _tx2gene.tsv`
     pattern=''"${gene}"'$'
     grep $pattern $file > gene.txt
-    seqtk subseq ~/github/sucker/differential_expression/data/transcriptomes/filtered/filtered_transcripts/${samp}_filtered_transcripts.fasta \
+    seqtk subseq ../filtered_transcripts/${samp}_filtered_transcripts.fasta \
     gene.txt | sed -r 's/(>.+)(\s.+)/\1_'"${samp}"'_'"${gene}"'/g' >> ${gene}.unfltr.fa
     done
     rm gene.txt
@@ -205,17 +209,19 @@ Cluster transcripts using cd-hit-est
 #!/bin/bash
 conda activate cd-hit
 
+> logs/cd_hit_est_1.log
+
 printf "Generating clusters with cd-hit-est\n"
 
 count=1
 
-for file in ~/github/sucker/differential_expression/data/transcriptomes/filtered/duplicate_genes/*.unfltr.fa
+for file in *.unfltr.fa
 do
   gene=`basename ${file} .unfltr.fa`
-  printf "Processing $gene $count\n"
+  printf "Processing $gene $count\n" >> logs/cd_hit_est_1.log
   let count++
-  cd-hit-est -i $file -o $gene -c .9 -n 10 -d 100
-  ~/miniconda3/envs/cd-hit/bin/clstr2txt.pl ${gene}.clstr > ${gene}.clstr.txt >/dev/null
+  cd-hit-est -i $file -o $gene -c .9 -n 10 -d 100 >> logs/cd_hit_est_2.log
+  ~/miniconda3/envs/cd-hit/bin/clstr2txt.pl ${gene}.clstr > ${gene}.clstr.txt
   rm ${gene}.clstr
   rm ${gene}
   mv ${gene}.clstr.txt ${gene}.clstr
@@ -228,17 +234,18 @@ Determine which clusters have all three lineages represented and all transcripts
 #!/bin/bash
 conda activate pandas
 
-printf "Filtering clusters with python\n"
+> logs/pandas.log
+
+printf "Filtering clusters with python\n" >> logs/pandas.log
 
 count=1
 
-for file in ~/github/sucker/differential_expression/data/transcriptomes/filtered/duplicate_genes/*.clstr.txt
+for file in *.clstr
 do
-  gene=`basename ${file} .clstr.txt`
-  printf "Processing $gene $count\n"
+  gene=`basename ${file} .clstr`
+  printf "Processing $gene $count\n" >> logs/pandas.log
   let count++
-  ~/github/sucker/differential_expression/code/cluster.py $file ${gene}.clstr.sorted.txt
-  break
+  ~/github/sucker/differential_expression/code/cluster.py $file ${gene}.clstr.srtd
 done
 
 ```
@@ -249,55 +256,74 @@ Generate filtered fasta files based off filtered transcripts identified in clust
 #!/bin/bash
 conda activate seqtk
 
-printf "Filtering fasta files using seqtk and renaming fasta file headers"
+> logs/seqtk2.log
+
+printf "Filtering fasta files using seqtk and renaming fasta file headers\n" >> logs/seqtk2.log
 
 count=1
 
-for file in ~/github/sucker/differential_expression/data/transcriptomes/filtered/duplicate_genes/*.clstr.sorted.txt;
+for file in *.clstr.srtd;
 do
-  gene=`basename ${file} .clstr.sorted.txt`
-  printf "Processing $gene $count\n"
+  gene=`basename ${file} .clstr.srtd`
+  printf "Processing $gene $count\n" >> logs/seqtk2.log
   let count++
-  # Remove transcripts that didn't pass criteria above 
-  seqtk subseq ~/github/sucker/differential_expression/data/transcriptomes/filtered/duplicate_genes/${gene}.unfiltered.fasta \
-  ${file} > ${gene}.filtered.fasta
-  # Replace old header with new header 
-  seqkit replace -p "^(\S+)" -r '{kv}' -k ${gene}.clstr.sorted.txt ${gene}.filtered.fasta > ${gene}.fltrd.fasta #for some reason adds new lines into fasta sequence
-  awk '!/^>/ { printf "%s", $0; n = "\n" } /^>/ { print n $0; n = "" } END { printf "%s", n }' ${gene}.fltrd.fasta > ${gene}.filtered.fasta #remove that new line
-  rm ${gene}.fltrd.fasta
-  rm ${gene}.clstr.sorted.txt
+  seqtk subseq ${gene}.unfltr.fa ${file} > ${gene}.unfltrd.fa
+  seqkit replace -p "^(\S+)" -r '{kv}' -k ${gene}.clstr.srtd ${gene}.unfltrd.fa > ${gene}.fltrd.fa 
+  awk '!/^>/ { printf "%s", $0; n = "\n" } /^>/ { print n $0; n = "" } END { printf "%s", n }' ${gene}.fltrd.fa > ${gene}.fltr.fa 
+  rm ${gene}.fltrd.fa
+  rm ${gene}.clstr.srtd
+  rm ${gene}.unfltrd.fa
+  rm ${gene}.unfltr.fa
+  rm ${gene}.clstr
 done
 ```
 
 Create common transcriptomes for all three lineages
 
 ```{bash}
+#!/bin/bash
+
+> logs/transcriptomes.log
+
+printf "Generating final transcriptomes\n" >> logs/transcriptomes.log
+
 for lineage in june utah straw;
 do
-  > ${lineage}.fasta
+  > ../final_transcripts/${lineage}.fa
 done
 
-for file in ~/github/sucker/differential_expression/data/transcriptomes/filtered/duplicate_genes/*.filtered.fasta;
+count=1
+
+for file in *.fltr.fa
 do
-  gene=`basename ${file} .filtered.fasta`
-  echo "Processing ${gene}"
+  gene=`basename ${file} .fltr.fa`
+  printf "Processing $gene $count\n" >> logs/transcriptomes.log
+  let count++
   for lineage in june utah straw;
   do
     grep $lineage $file > gene.txt
-    grep -f gene.txt -A 1 $file >> ${lineage}.fasta
+    grep -f gene.txt -A 1 $file >> ../final_transcrtips/${lineage}.fa
     done
   rm gene.txt
+  rm ${gene}.fltr.fa
 done
 ```
 
+Generate second tx2gene file
 
+```{bash}
+#!/bin/bash
 
+cd ~/github/sucker/differential_expression/data/transcriptomes/filtered/final_transcripts
 
+for file in *.fa;
+do
+  lineage=`basename ${file} .fa`
+  grep ">" ${lineage}.fa | perl -pe 's/>(\w+\/\d+)_(\w+)_(.+)(_)(\d+)/$1\t$2\t$3\t$3$4$5/' \
+  > ../tx2gene/${lineage}_tx2gene.fltrd.tsv
+done
 
-
-
-
-
+```
 
 # Quantify Transcript Abundance with Salmon
 
