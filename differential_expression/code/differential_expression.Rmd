@@ -29,7 +29,7 @@ source ~/miniconda3/bin/activate
 
 # Predict Gene Names
 
-Predict gene names for each transcript in the de novo transcriptomes using EggNOG Mapper.
+Predict gene names for transcriptomes using EggNOG Mapper.
 
 ```{bash}
 #!/bin/bash
@@ -65,7 +65,7 @@ done
 
 ## Filtered Transcripts .lst File
 
-Generate list of transcripts that are annotated, have e-values less than 1e-30, and share gene names across all lineages. 
+Generate list of transcripts that are annotated and share gene names across all lineages. 
 
 ```{r}
 library(tidyverse)
@@ -73,47 +73,62 @@ library(dplyr)
 
 # File Paths
 
-june_path <- "./data/predicted_genes/June_EggNOG.tsv"
-utah_path <- "./data/predicted_genes/Utah_EggNOG.tsv"
-straw_path <-  "./data/predicted_genes/Straw_EggNOG.tsv"
+june_path <- "./data/predicted_genes/june/out.emapper.annotations.xlsx"
+utah_path <- "./data/predicted_genes/utah/out.emapper.annotations.xlsx"
+straw_path <- "./data/predicted_genes/straw/out.emapper.annotations.xlsx"
 
-# All transcripts
+# Filtered transcripts 
 
-june_all <- read_tsv(june_path) %>%
-  dplyr::rename(queryID = "Query ID", geneName = "Gene Name", eValue = "E-Value", bitScore = "Bit-Score") %>%
-  select(queryID, geneName, eValue, bitScore) %>% mutate(geneName = toupper(geneName))
+june_fltrd <- readxl::read_excel(june_path, skip = 2) %>% 
+  dplyr::rename(query = "query", gene = "Preferred_name", evalue = "evalue", score = "score") %>%
+  drop_na() %>% select(query, gene, evalue, score) %>% # remove last 3 rows
+  mutate(across('query', str_replace, '_\\d', '')) %>% # rename transcripts
+  mutate(evalue = as.numeric(evalue)) %>% filter(gene != "-") %>% #remove genes without names
+  group_by(query) %>% slice_min(order_by = evalue) %>% 
+  # transcripts can have multiple annotations. Only keep one based off min evalue
+  mutate(geneL = tolower(gene))
 
-utah_all <- read_tsv(utah_path) %>%
-  dplyr::rename(queryID = "Query ID", geneName = "Gene Name", eValue = "E-Value", bitScore = "Bit-Score") %>%
-  select(queryID, geneName, eValue, bitScore) %>% mutate(geneName = toupper(geneName))
+utah_fltrd <- readxl::read_excel(utah_path, skip = 2) %>% 
+  dplyr::rename(query = "query", gene = "Preferred_name", evalue = "evalue", score = "score") %>%
+  drop_na() %>% select(query, gene, evalue, score) %>% # remove last 3 rows
+  mutate(across('query', str_replace, '_\\d', '')) %>% # rename transcripts
+  mutate(evalue = as.numeric(evalue)) %>% filter(gene != "-") %>% #remove genes without names
+  group_by(query) %>% slice_min(order_by = evalue) %>% # only keep one annotation per transcript based off minimum evalue
+  mutate(geneL = tolower(gene))
 
-straw_all <- read_tsv(straw_path) %>%
-  dplyr::rename(queryID = "Query ID", geneName = "Gene Name", eValue = "E-Value", bitScore = "Bit-Score") %>%
-  select(queryID, geneName, eValue, bitScore) %>% mutate(geneName = toupper(geneName))
-
-# Transcripts that don't have gene names removed
-
-june_na_removed <- filter(june_all, !is.na(geneName)) 
-utah_na_removed <- filter(utah_all, !is.na(geneName)) 
-straw_na_removed <- filter(straw_all, !is.na(geneName)) 
-
-# Transcripts with e-value > 1e-30 removed 
-
-june_eValue <- filter(june_na_removed, eValue < 1e-30) 
-utah_eValue <- filter(utah_na_removed, eValue < 1e-30) 
-straw_eValue <- filter(straw_na_removed, eValue < 1e-30) 
+straw_fltrd <- readxl::read_excel(straw_path, skip = 2) %>% 
+  dplyr::rename(query = "query", gene = "Preferred_name", evalue = "evalue", score = "score") %>%
+  drop_na() %>% select(query, gene, evalue, score) %>% # remove last 3 rows
+  mutate(across('query', str_replace, '_\\d', '')) %>% # rename transcripts
+  mutate(evalue = as.numeric(evalue)) %>% filter(gene != "-") %>% #remove genes without names
+  group_by(query) %>% slice_min(order_by = evalue) %>% # only keep one annotation per transcript based off minimum eval
+  mutate(geneL = tolower(gene))
 
 # Common genes between 3 lineages
 
-june_gene_name <- june_eValue$geneName
-utah_gene_name <- utah_eValue$geneName
-straw_gene_name <- straw_eValue$geneName
+common_genes <- as_vector(intersect(intersect(june_fltrd$geneL, utah_fltrd$geneL), straw_fltrd$geneL))
 
-common_genes1 <- intersect(intersect(june_gene_name, utah_gene_name), straw_gene_name)
 
-common_genes_up[duplicated(common_genes_up)]
 
-#common_genes_cnt <- as_tibble(common_genes) %>% mutate(value = toupper(value)) %>% summarise(count = n_distinct(value))
+# Next steps
+
+# In the case where there are two gene names that are the same except for the case differences (for example,mmp2 vs MMP2), how can I change only those instances to lower case? 
+#Min eValue or max eValue....this is not very clear to me!
+
+common_genes[duplicated(common_genes)]
+
+common_genes_cnt <- as_tibble(common_genes) %>% mutate(value = toupper(value)) %>% summarise(count = n_distinct(value))
+
+test <- unique(june_fltrd$gene) %>% toupper()
+
+test[duplicated(test)]
+
+june_fltrd_up <- mutate(june_fltrd, gene = tolower(gene)) %>% summarise(count = n_distinct(gene))
+june_fltrd$gene[duplicated(june_fltrd$gene)]
+
+
+# Write tables
+
 
 write.table(common_genes, "./data/predicted_genes/common_genes.txt", row.names = FALSE, col.names = FALSE, quote = FALSE)
 

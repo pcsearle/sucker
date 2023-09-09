@@ -12,3 +12,5 @@ differential_expression/data/transcriptomes/unfiltered/straw_transcripts.fasta
 differential_expression/data/salmon/
 differential_expression/data/rna_seq/
 differential_expression/data/transcriptomes/unfiltered/NCBI/
+differential_expression/data/predicted_genes/
+differential_expression/data/transcriptomes/filtered/
