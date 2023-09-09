@@ -9,11 +9,6 @@ output: html_document
 
 Description: 
 
-predicted_genes - Predict gene names for transcriptomes generated using EggNOG Mapper in OmicsBox.
-  June_EggNOG.tsv - June sucker
-  Straw_EggNOG.tsv - Strawberry Reservoir Utah sucker
-  Utah_EggNOG.tsv - Utah Lake Utah sucker
-
 sample_info - Information of which RNA-seq files go with which week for Salmon analysis. When the files are downloaded from NCBI, they need to be renamed to match the names in these files. 
   june_samples.txt - June sucker
   straw_samples.txt - Strawberry Reservoir Utah sucker
