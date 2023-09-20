@@ -1,0 +1,415 @@
+Gene	Gene_name	GO_class	Contributor	Organism	Evidence	Evidence_with	Reference	Date
+MYH3	Myosin-3	GO:0060325	BHF-UCL	Homo sapiens	IC	GO:0003009	PMID:16642020	20140522
+Ednra	endothelin receptor type A	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:105923	RGD:1624291	20210809
+Ednra	endothelin receptor type A	GO:0060324	MGI	Mus musculus	IDA		MGI:MGI:3773578|PMID:18199583	20210809
+Ednra	endothelin receptor type A	GO:0060324	MGI	Mus musculus	IMP	MGI:MGI:3773699	MGI:MGI:3773578|PMID:18199583	20210809
+Ednra	endothelin receptor type A	GO:0060324	MGI	Mus musculus	IDA		MGI:MGI:3773578|PMID:18199583	20210809
+Ednra	endothelin receptor type A	GO:0060324	MGI	Mus musculus	IMP	MGI:MGI:3773699	MGI:MGI:3773578|PMID:18199583	20210809
+abof	about face	GO:0007409	FlyBase	Drosophila melanogaster	IMP		FB:FBrf0083232|PMID:7646885	20060803
+phf21ab	PHD finger protein 21Ab	GO:0060324	ZFIN	Danio rerio	IMP	ZFIN:ZDB-MRPHLNO-120725-1	PMID:22770980	20120730
+CHD7	Chromodomain-helicase-DNA-binding protein 7	GO:0060324	BHF-UCL	Homo sapiens	IMP		PMID:15300250	20081107
+ALDH1A2	Retinal dehydrogenase 2	GO:0060324	Ensembl	Homo sapiens	IEA	UniProtKB:Q62148|ensembl:ENSMUSP00000034723	GO_REF:0000107	20211009
+MAPK1	Mitogen-activated protein kinase 1	GO:0060324	Ensembl	Homo sapiens	IEA	UniProtKB:P63085|ensembl:ENSMUSP00000065983	GO_REF:0000107	20211009
+SRF	Serum response factor	GO:0060324	Ensembl	Homo sapiens	IEA	UniProtKB:Q9JM73|ensembl:ENSMUSP00000015749	GO_REF:0000107	20211009
+RARG	Retinoic acid receptor gamma	GO:0060324	Ensembl	Homo sapiens	IEA	UniProtKB:P18911|ensembl:ENSMUSP00000048838	GO_REF:0000107	20211009
+ZFAND5	AN1-type zinc finger protein 5	GO:0060324	Ensembl	Homo sapiens	IEA	UniProtKB:O88878|ensembl:ENSMUSP00000158187	GO_REF:0000107	20211009
+WNT5A	Protein Wnt-5a	GO:0060324	BHF-UCL	Homo sapiens	IMP		PMID:19918918	20100714
+GRHL2	Grainyhead-like protein 2 homolog	GO:0060324	Ensembl	Homo sapiens	IEA	UniProtKB:Q8K5C0|ensembl:ENSMUSP00000022895	GO_REF:0000107	20211009
+BBS4	Bardet-Biedl syndrome 4 protein	GO:0060324	Ensembl	Homo sapiens	IEA	UniProtKB:Q8C1Z7|ensembl:ENSMUSP00000026265	GO_REF:0000107	20211009
+MKKS	McKusick-Kaufman/Bardet-Biedl syndromes putative chaperonin	GO:0060324	Ensembl	Homo sapiens	IEA	UniProtKB:Q9JI70|ensembl:ENSMUSP00000105716	GO_REF:0000107	20211009
+HOXB3	Homeobox protein Hox-B3	GO:0060324	Ensembl	Homo sapiens	IEA	UniProtKB:P09026|ensembl:ENSMUSP00000091476	GO_REF:0000107	20211009
+RAF1	RAF proto-oncogene serine/threonine-protein kinase	GO:0060324	Ensembl	Homo sapiens	IEA	UniProtKB:Q99N57|ensembl:ENSMUSP00000000451	GO_REF:0000107	20211009
+HOXB3	Homeobox domain-containing protein	GO:0060324	Ensembl	Bos taurus	IEA	UniProtKB:P09026|ensembl:ENSMUSP00000091476	GO_REF:0000107	20211009
+ZFAND5	ZFAND5 protein	GO:0060324	Ensembl	Bos taurus	IEA	UniProtKB:O88878|ensembl:ENSMUSP00000158187	GO_REF:0000107	20211009
+MAPK3	Mitogen-activated protein kinase 3	GO:0060324	Ensembl	Homo sapiens	IEA	UniProtKB:Q63844|ensembl:ENSMUSP00000051619	GO_REF:0000107	20211009
+ALDH1A3	Aldehyde dehydrogenase family 1 member A3	GO:0060324	Ensembl	Homo sapiens	IEA	UniProtKB:Q9JHW9|ensembl:ENSMUSP00000015278	GO_REF:0000107	20211009
+MKKS	Uncharacterized protein	GO:0060324	Ensembl	Gallus gallus	IEA	UniProtKB:Q9JI70|ensembl:ENSMUSP00000105716	GO_REF:0000107	20211009
+ALDH6	Aldehyde dehydrogenase	GO:0060324	Ensembl	Gallus gallus	IEA	UniProtKB:Q9JHW9|ensembl:ENSMUSP00000015278	GO_REF:0000107	20211009
+SOX3	Transcription factor SOX-3	GO:0060324	UniProt	Gallus gallus	ISS	UniProtKB:P53784	GO_REF:0000024	20110627
+BRAF	Serine/threonine-protein kinase B-raf	GO:0060324	Ensembl	Gallus gallus	IEA	UniProtKB:P28028|ensembl:ENSMUSP00000002487	GO_REF:0000107	20211009
+MAPK3	Mitogen-activated protein kinase	GO:0060324	Ensembl	Gallus gallus	IEA	UniProtKB:P63085|ensembl:ENSMUSP00000065983	GO_REF:0000107	20211009
+CHD7	DNA helicase	GO:0060324	Ensembl	Gallus gallus	IEA	UniProtKB:Q9P2D1|ensembl:ENSP00000392028	GO_REF:0000107	20211009
+MAP2K1	Protein kinase domain-containing protein	GO:0060324	Ensembl	Gallus gallus	IEA	UniProtKB:P31938|ensembl:ENSMUSP00000005066	GO_REF:0000107	20211009
+BBS4	Uncharacterized protein	GO:0060324	Ensembl	Gallus gallus	IEA	UniProtKB:Q8C1Z7|ensembl:ENSMUSP00000026265	GO_REF:0000107	20211009
+SRF	MADS-box domain-containing protein	GO:0060324	Ensembl	Gallus gallus	IEA	UniProtKB:Q9JM73|ensembl:ENSMUSP00000015749	GO_REF:0000107	20211009
+HOXB3	Homeobox domain-containing protein	GO:0060324	Ensembl	Gallus gallus	IEA	UniProtKB:P09026|ensembl:ENSMUSP00000091476	GO_REF:0000107	20211009
+WNT5A	Protein Wnt	GO:0060324	Ensembl	Gallus gallus	IEA	UniProtKB:P41221|ensembl:ENSP00000264634	GO_REF:0000107	20211009
+Aldh1a3	aldehyde dehydrogenase 1 family, member A3	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:1861722	RGD:1624291	20090630
+Aldh1a3	aldehyde dehydrogenase 1 family, member A3	GO:0060324	Ensembl	Rattus norvegicus	IEA	UniProtKB:Q9JHW9|ensembl:ENSMUSP00000015278	GO_REF:0000107|RGD:1600115	20211009
+Aldh1a2	aldehyde dehydrogenase 1 family, member A2	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:107928	RGD:1624291	20090630
+Map2k2	mitogen activated protein kinase kinase 2	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:1346867	RGD:1624291	20150729
+Ednra	endothelin receptor type A	GO:0060324	Ensembl	Rattus norvegicus	IEA	UniProtKB:Q61614|ensembl:ENSMUSP00000034029	GO_REF:0000107|RGD:1600115	20211009
+kdm6a	lysine (K)-specific demethylase 6A	GO:0060324	ZFIN	Danio rerio	IMP	ZFIN:ZDB-MRPHLNO-130521-1	PMID:23354975	20130521
+Srf	serum response factor	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:106658	RGD:1624291	20150729
+Mapk1	mitogen activated protein kinase 1	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:1346858	RGD:1624291	20150729
+Braf	B-Raf proto-oncogene, serine/threonine kinase	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:88190	RGD:1624291	20150729
+Itga4	integrin alpha 4	GO:0060324	MGI	Mus musculus	IMP	MGI:MGI:1857206	MGI:MGI:70927|PMID:7539359	20090610
+Chd7	chromodomain helicase DNA binding protein 7	GO:0060324	MGI	Mus musculus	ISO	UniProtKB:Q9P2D1	MGI:MGI:4834177|GO_REF:0000096	20081107
+Bbs4	Bardet-Biedl syndrome 4 (human)	GO:0060324	MGI	Mus musculus	IMP	MGI:MGI:3055492	MGI:MGI:3789436|PMID:18443298	20150130
+Bbs4	Bardet-Biedl syndrome 4	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:2143311	RGD:1624291	20150130
+Mapk3	mitogen activated protein kinase 3	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:1346859	RGD:1624291	20150729
+Wnt5a	Wnt family member 5A	GO:0060324	Ensembl	Rattus norvegicus	IEA	UniProtKB:P41221|ensembl:ENSP00000264634	GO_REF:0000107|RGD:1600115	20210612
+Wnt5a	Wnt family member 5A	GO:0060324	RGD	Rattus norvegicus	ISO	UniProtKB:P41221	RGD:1624291	20100714
+Aldh1a2	aldehyde dehydrogenase family 1, subfamily A2	GO:0060324	MGI	Mus musculus	IMP	MGI:MGI:1857891	MGI:MGI:3700411|PMID:17184764	20090630
+Aldh1a2	aldehyde dehydrogenase family 1, subfamily A2	GO:0060324	MGI	Mus musculus	IGI	MGI:MGI:1861722	MGI:MGI:3700411|PMID:17184764	20090630
+EDNRA	Endothelin receptor type A	GO:0060324	Ensembl	Gallus gallus	IEA	UniProtKB:Q61614|ensembl:ENSMUSP00000034029	GO_REF:0000107	20211009
+LOC107051537	Uncharacterized protein	GO:0060324	Ensembl	Gallus gallus	IEA	UniProtKB:P18911|ensembl:ENSMUSP00000048838	GO_REF:0000107	20211009
+RAF1	RAF proto-oncogene serine/threonine-protein kinase	GO:0060324	Ensembl	Gallus gallus	IEA	UniProtKB:Q99N57|ensembl:ENSMUSP00000000451	GO_REF:0000107	20211009
+SOX3	Transcription factor SOX-3	GO:0060324	UniProt	Homo sapiens	ISS	UniProtKB:P53784	GO_REF:0000024	20110627
+EDNRA	Endothelin-1 receptor	GO:0060324	Ensembl	Homo sapiens	IEA	UniProtKB:Q61614|ensembl:ENSMUSP00000034029	GO_REF:0000107	20211009
+MAPK3	Mitogen-activated protein kinase	GO:0060324	Ensembl	Bos taurus	IEA	UniProtKB:Q63844|ensembl:ENSMUSP00000051619	GO_REF:0000107	20211009
+MAP2K1	Dual specificity mitogen-activated protein kinase kinase 1	GO:0060324	Ensembl	Homo sapiens	IEA	UniProtKB:P31938|ensembl:ENSMUSP00000005066	GO_REF:0000107	20211009
+GRHL2	CP2 domain-containing protein	GO:0060324	Ensembl	Bos taurus	IEA	UniProtKB:Q8K5C0|ensembl:ENSMUSP00000022895	GO_REF:0000107	20211009
+MAP2K1	Protein kinase domain-containing protein	GO:0060324	Ensembl	Bos taurus	IEA	UniProtKB:P31938|ensembl:ENSMUSP00000005066	GO_REF:0000107	20211009
+EDNRA	Endothelin-1 receptor	GO:0060324	Ensembl	Bos taurus	IEA	UniProtKB:Q61614|ensembl:ENSMUSP00000034029	GO_REF:0000107	20211009
+CHD7	DNA helicase	GO:0060324	Ensembl	Bos taurus	IEA	UniProtKB:Q9P2D1|ensembl:ENSP00000392028	GO_REF:0000107	20211009
+RARA	Retinoic acid receptor alpha	GO:0060324	Ensembl	Gallus gallus	IEA	UniProtKB:P11416|ensembl:ENSMUSP00000069744	GO_REF:0000107	20211009
+ALDH1A3	Aldedh domain-containing protein	GO:0060324	Ensembl	Bos taurus	IEA	UniProtKB:Q9JHW9|ensembl:ENSMUSP00000015278	GO_REF:0000107	20211009
+RARA	Retinoic acid receptor alpha	GO:0060324	Ensembl	Bos taurus	IEA	UniProtKB:P11416|ensembl:ENSMUSP00000069744	GO_REF:0000107	20211009
+RARG	RARG protein	GO:0060324	Ensembl	Bos taurus	IEA	UniProtKB:P18911|ensembl:ENSMUSP00000048838	GO_REF:0000107	20211009
+MKKS	McKusick-Kaufman syndrome	GO:0060324	Ensembl	Bos taurus	IEA	UniProtKB:Q9JI70|ensembl:ENSMUSP00000105716	GO_REF:0000107	20211009
+ALDH1A2	Aldedh domain-containing protein	GO:0060324	Ensembl	Bos taurus	IEA	UniProtKB:Q62148|ensembl:ENSMUSP00000034723	GO_REF:0000107	20211009
+BBS4	Bardet-Biedl syndrome 4 protein homolog	GO:0060324	Ensembl	Bos taurus	IEA	UniProtKB:Q8C1Z7|ensembl:ENSMUSP00000026265	GO_REF:0000107	20211009
+RAF1	RAF proto-oncogene serine/threonine-protein kinase	GO:0060324	Ensembl	Bos taurus	IEA	UniProtKB:Q99N57|ensembl:ENSMUSP00000000451	GO_REF:0000107	20211009
+SRF	MADS-box domain-containing protein	GO:0060324	Ensembl	Bos taurus	IEA	UniProtKB:Q9JM73|ensembl:ENSMUSP00000015749	GO_REF:0000107	20211009
+BRAF	B-Raf proto-onco, serine/threonine kinase	GO:0060324	Ensembl	Bos taurus	IEA	UniProtKB:P28028|ensembl:ENSMUSP00000002487	GO_REF:0000107	20211009
+MAPK1	Mitogen-activated protein kinase 1	GO:0060324	Ensembl	Bos taurus	IEA	UniProtKB:P63085|ensembl:ENSMUSP00000065983	GO_REF:0000107	20211009
+WNT5A	Protein Wnt	GO:0060324	UniProt	Bos taurus	ISS	UniProtKB:P41221	GO_REF:0000024	20110518
+WNT5A	Protein Wnt	GO:0060324	UniProt	Canis lupus familiaris	ISS	UniProtKB:P41221	GO_REF:0000024	20170210
+CHD7	DNA helicase	GO:0060324	Ensembl	Canis lupus familiaris	IEA	UniProtKB:Q9P2D1|ensembl:ENSP00000392028	GO_REF:0000107	20211009
+EDNRA	Endothelin receptor type A	GO:0060324	Ensembl	Canis lupus familiaris	IEA	UniProtKB:Q61614|ensembl:ENSMUSP00000034029	GO_REF:0000107	20211009
+SRF	MADS-box domain-containing protein	GO:0060324	Ensembl	Canis lupus familiaris	IEA	UniProtKB:Q9JM73|ensembl:ENSMUSP00000015749	GO_REF:0000107	20211009
+RAF1	Raf-1 proto-onco, serine/threonine kinase	GO:0060324	Ensembl	Canis lupus familiaris	IEA	UniProtKB:Q99N57|ensembl:ENSMUSP00000000451	GO_REF:0000107	20211009
+ALDH1A2	Aldedh domain-containing protein	GO:0060324	Ensembl	Gallus gallus	IEA	UniProtKB:Q62148|ensembl:ENSMUSP00000034723	GO_REF:0000107	20211009
+MKKS	McKusick-Kaufman syndrome	GO:0060324	Ensembl	Canis lupus familiaris	IEA	UniProtKB:Q9JI70|ensembl:ENSMUSP00000105716	GO_REF:0000107	20211009
+GRHL2	CP2 domain-containing protein	GO:0060324	Ensembl	Canis lupus familiaris	IEA	UniProtKB:Q8K5C0|ensembl:ENSMUSP00000022895	GO_REF:0000107	20211009
+MAPK1	Mitogen-activated protein kinase	GO:0060324	Ensembl	Canis lupus familiaris	IEA	UniProtKB:P63085|ensembl:ENSMUSP00000065983	GO_REF:0000107	20211009
+RARA	Retinoic acid receptor alpha	GO:0060324	Ensembl	Canis lupus familiaris	IEA	UniProtKB:P11416|ensembl:ENSMUSP00000069744	GO_REF:0000107	20211009
+Itga4	integrin subunit alpha 4	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:96603	RGD:1624291	20090610
+Rarg	retinoic acid receptor, gamma	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:97858	RGD:1624291	20140522
+Grhl2	grainyhead-like transcription factor 2	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:2182543	RGD:1624291	20131113
+Sox3	SRY-box transcription factor 3	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:98365	RGD:1624291	20110627
+Hoxb3	homeo box B3	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:96184	RGD:1624291	20111019
+Zfand5	zinc finger AN1-type containing 5	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:1278334	RGD:1624291	20090223
+Raf1	Raf-1 proto-oncogene, serine/threonine kinase	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:97847	RGD:1624291	20150729
+Rara	retinoic acid receptor, alpha	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:97856	RGD:1624291	20140522
+Mkks	MKKS centrosomal shuttling protein	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:1891836	RGD:1624291	20150130
+Map2k1	mitogen activated protein kinase kinase 1	GO:0060324	RGD	Rattus norvegicus	ISO	MGI:1346866	RGD:1624291	20150729
+Map2k1	mitogen activated protein kinase kinase 1	GO:0060324	Ensembl	Rattus norvegicus	IEA	UniProtKB:P31938|ensembl:ENSMUSP00000005066	GO_REF:0000107|RGD:1600115	20211009
+Chd7	chromodomain helicase DNA binding protein 7	GO:0060324	RGD	Rattus norvegicus	ISO	UniProtKB:Q9P2D1	RGD:1624291	20081107
+RARA	Retinoic acid receptor alpha	GO:0060324	Ensembl	Homo sapiens	IEA	UniProtKB:P11416|ensembl:ENSMUSP00000069744	GO_REF:0000107	20211009
+Wnt5a	wingless-type MMTV integration site family, member 5A	GO:0060324	MGI	Mus musculus	ISO	UniProtKB:P41221	MGI:MGI:4834177|GO_REF:0000096	20100714
+Zfand5	zinc finger, AN1-type domain 5	GO:0060324	MGI	Mus musculus	IMP	MGI:MGI:3526860	MGI:MGI:3696608|PMID:17143286	20090223
+Sox3	SRY (sex determining region Y)-box 3	GO:0060324	UniProt	Mus musculus	IMP		MGI:MGI:3765357|PMID:17728342	20110627
+Braf	Braf transforming gene	GO:0060324	MGI	Mus musculus	IGI	MGI:MGI:97847	MGI:MGI:3832113|PMID:18952847	20150729
+Map2k1	mitogen-activated protein kinase kinase 1	GO:0060324	MGI	Mus musculus	IGI	MGI:MGI:1346867	MGI:MGI:3832113|PMID:18952847	20150729
+Mapk3	mitogen-activated protein kinase 3	GO:0060324	MGI	Mus musculus	IGI	MGI:MGI:1346858	MGI:MGI:3832113|PMID:18952847	20150729
+Mapk1	mitogen-activated protein kinase 1	GO:0060324	MGI	Mus musculus	IMP		MGI:MGI:3832113|PMID:18952847	20150729
+Mapk1	mitogen-activated protein kinase 1	GO:0060324	MGI	Mus musculus	IGI	MGI:MGI:1346859	MGI:MGI:3832113|PMID:18952847	20150729
+Grhl2	grainyhead like transcription factor 2	GO:0060324	MGI	Mus musculus	IMP	MGI:MGI:4942413	MGI:MGI:4943100|PMID:21377456	20131113
+Map2k2	mitogen-activated protein kinase kinase 2	GO:0060324	MGI	Mus musculus	IGI	MGI:MGI:1346866	MGI:MGI:3832113|PMID:18952847	20150729
+Aldh1a3	aldehyde dehydrogenase family 1, subfamily A3	GO:0060324	MGI	Mus musculus	IGI	MGI:MGI:107928	MGI:MGI:3700411|PMID:17184764	20090630
+Mkks	McKusick-Kaufman syndrome	GO:0060324	MGI	Mus musculus	IMP	MGI:MGI:3608879	MGI:MGI:3789436|PMID:18443298	20150130
+Srf	serum response factor	GO:0060324	MGI	Mus musculus	IMP	MGI:MGI:3522206	MGI:MGI:3832113|PMID:18952847	20150729
+Hoxb3	homeobox B3	GO:0060324	MGI	Mus musculus	IDA		MGI:MGI:4949985|PMID:21320481	20111019
+Rarg	retinoic acid receptor, gamma	GO:0060324	MGI	Mus musculus	IGI	MGI:MGI:97856	MGI:MGI:69060|PMID:7607067	20140522
+Rara	retinoic acid receptor, alpha	GO:0060324	MGI	Mus musculus	IGI	MGI:MGI:97858	MGI:MGI:69060|PMID:7607067	20140522
+Raf1	v-raf-leukemia viral oncogene 1	GO:0060324	MGI	Mus musculus	IGI	MGI:MGI:88190	MGI:MGI:3832113|PMID:18952847	20150729
+EDNRA	Endothelin receptor type A	GO:0060324	Ensembl	Sus scrofa	IEA	UniProtKB:Q61614|ensembl:ENSMUSP00000034029	GO_REF:0000107	20211009
+SRF	MADS-box domain-containing protein	GO:0060324	Ensembl	Sus scrofa	IEA	UniProtKB:Q9JM73|ensembl:ENSMUSP00000015749	GO_REF:0000107	20211009
+RARA	Retinoic acid receptor alpha	GO:0060324	Ensembl	Sus scrofa	IEA	UniProtKB:P11416|ensembl:ENSMUSP00000069744	GO_REF:0000107	20211009
+CHD7	DNA helicase	GO:0060324	Ensembl	Sus scrofa	IEA	UniProtKB:Q9P2D1|ensembl:ENSP00000392028	GO_REF:0000107	20211009
+HOXB3	Homeobox domain-containing protein	GO:0060324	Ensembl	Sus scrofa	IEA	UniProtKB:P09026|ensembl:ENSMUSP00000091476	GO_REF:0000107	20211009
+ZFAND5	Zinc finger AN1-type containing 5	GO:0060324	Ensembl	Sus scrofa	IEA	UniProtKB:O88878|ensembl:ENSMUSP00000158187	GO_REF:0000107	20211009
+MKKS	Uncharacterized protein	GO:0060324	Ensembl	Sus scrofa	IEA	UniProtKB:Q9JI70|ensembl:ENSMUSP00000105716	GO_REF:0000107	20211009
+RAF1	RAF proto-oncogene serine/threonine-protein kinase isoform a	GO:0060324	Ensembl	Sus scrofa	IEA	UniProtKB:Q99N57|ensembl:ENSMUSP00000000451	GO_REF:0000107	20211009
+GRHL2	CP2 domain-containing protein	GO:0060324	Ensembl	Sus scrofa	IEA	UniProtKB:Q8K5C0|ensembl:ENSMUSP00000022895	GO_REF:0000107	20211009
+MAPK3	Mitogen-activated protein kinase	GO:0060324	Ensembl	Sus scrofa	IEA	UniProtKB:Q63844|ensembl:ENSMUSP00000051619	GO_REF:0000107	20211009
+MAP2K1	Protein kinase domain-containing protein	GO:0060324	Ensembl	Sus scrofa	IEA	UniProtKB:P31938|ensembl:ENSMUSP00000005066	GO_REF:0000107	20211009
+RARG	Retinoic acid receptor gamma	GO:0060324	Ensembl	Sus scrofa	IEA	UniProtKB:P18911|ensembl:ENSMUSP00000048838	GO_REF:0000107	20211009
+WNT5A	Protein Wnt	GO:0060324	Ensembl	Sus scrofa	IEA	UniProtKB:P41221|ensembl:ENSP00000264634	GO_REF:0000107	20211009
+ALDH1A2	Aldedh domain-containing protein	GO:0060324	Ensembl	Sus scrofa	IEA	UniProtKB:Q62148|ensembl:ENSMUSP00000034723	GO_REF:0000107	20211009
+ALDH1A3	Aldedh domain-containing protein	GO:0060324	Ensembl	Sus scrofa	IEA	UniProtKB:Q9JHW9|ensembl:ENSMUSP00000015278	GO_REF:0000107	20211009
+BRAF	B-Raf proto-oncogene, serine/threonine kinase	GO:0060324	Ensembl	Sus scrofa	IEA	UniProtKB:P28028|ensembl:ENSMUSP00000002487	GO_REF:0000107	20211009
+crispld2	cysteine-rich secretory protein LCCL domain containing 2	GO:0060325	ZFIN	Danio rerio	IMP	ZFIN:ZDB-MRPHLNO-130131-1	PMID:22887593	20130201
+crispld2	cysteine-rich secretory protein LCCL domain containing 2	GO:0060325	ZFIN	Danio rerio	IMP	ZFIN:ZDB-MRPHLNO-130131-2	PMID:22887593	20130201
+crispld2	cysteine-rich secretory protein LCCL domain containing 2	GO:0060325	ZFIN	Danio rerio	IMP	ZFIN:ZDB-MRPHLNO-130131-3	PMID:22887593	20130201
+notch2	notch receptor 2	GO:0060325	ZFIN	Danio rerio	IGI	ZFIN:ZDB-GENO-980202-1068|ZFIN:ZDB-MRPHLNO-041207-6	PMID:20431122	20100804
+MSX1	Homeobox protein MSX-1	GO:0060325	BHF-UCL	Homo sapiens	IMP		PMID:10742093	20110525
+MSX1	Homeobox protein MSX-1	GO:0060325	BHF-UCL	Homo sapiens	IMP		PMID:11332647	20110525
+MSX1	Homeobox protein MSX-1	GO:0060325	BHF-UCL	Homo sapiens	IMP		PMID:12651933	20110525
+CSRNP1	Cysteine/serine-rich nuclear protein 1	GO:0060325	Ensembl	Homo sapiens	IEA	UniProtKB:P59054|ensembl:ENSMUSP00000149214	GO_REF:0000107	20211009
+TIPARP	Protein mono-ADP-ribosyltransferase TIPARP	GO:0060325	Ensembl	Homo sapiens	IEA	UniProtKB:Q8C1B2|ensembl:ENSMUSP00000048051	GO_REF:0000107	20211009
+RRAS	Ras-related protein R-Ras	GO:0060325	UniProt	Homo sapiens	IMP		PMID:24705357	20140912
+PLEKHA1	Pleckstrin homology domain-containing family A member 1	GO:0060325	Ensembl	Homo sapiens	IEA	UniProtKB:Q8BUL6|ensembl:ENSMUSP00000074675	GO_REF:0000107	20211009
+PAX9	Paired box protein Pax-9	GO:0060325	Ensembl	Homo sapiens	IEA	UniProtKB:P47242|ensembl:ENSMUSP00000117928	GO_REF:0000107	20211009
+CRISPLD2	Cysteine-rich secretory protein LCCL domain-containing 2	GO:0060325	UniProt	Homo sapiens	IMP		PMID:21254358	20140409
+RAB3GAP1	Rab3 GTPase-activating protein catalytic subunit	GO:0060325	BHF-UCL	Homo sapiens	IMP		PMID:20512159	20110713
+DKK1	Dickkopf-related protein 1	GO:0060325	Ensembl	Homo sapiens	IEA	UniProtKB:O54908|ensembl:ENSMUSP00000025803	GO_REF:0000107	20211009
+SCX	Basic helix-loop-helix transcription factor scleraxis	GO:0060325	Ensembl	Homo sapiens	IEA	UniProtKB:Q64124|ensembl:ENSMUSP00000043668	GO_REF:0000107	20211009
+PDGFRA	Platelet-derived growth factor receptor alpha	GO:0060325	Ensembl	Homo sapiens	IEA	UniProtKB:P26618|ensembl:ENSMUSP00000127173	GO_REF:0000107	20211009
+CLDN5	Claudin-5	GO:0060325	UniProt	Homo sapiens	TAS		PMID:9192844	20150911
+MMP2	72 kDa type IV collagenase	GO:0060325	Ensembl	Homo sapiens	IEA	UniProtKB:P33434|ensembl:ENSMUSP00000034187	GO_REF:0000107	20211009
+STRA6	Receptor for retinol uptake STRA6	GO:0060325	DFLAT	Homo sapiens	IMP		PMID:17273977	20110503
+NIPBL	Nipped-B-like protein	GO:0060325	BHF-UCL	Homo sapiens	IMP		PMID:15146186	20100302
+NIPBL	Nipped-B-like protein	GO:0060325	BHF-UCL	Homo sapiens	IMP		PMID:19242925	20100127
+DLX5	Homeobox protein DLX-5	GO:0060325	Ensembl	Homo sapiens	IEA	UniProtKB:P70396|ensembl:ENSMUSP00000052559	GO_REF:0000107	20211009
+NOG	Noggin	GO:0060325	Ensembl	Homo sapiens	IEA	UniProtKB:P97466|ensembl:ENSMUSP00000061427	GO_REF:0000107	20211009
+SKI	Ski oncogene	GO:0060325	BHF-UCL	Homo sapiens	ISS	UniProtKB:Q60698	GO_REF:0000024	20110403
+COL1A1	Collagen alpha-1(I) chain	GO:0060325	Ensembl	Homo sapiens	IEA	UniProtKB:P11087|ensembl:ENSMUSP00000001547	GO_REF:0000107	20211009
+CRISPLD1	Cysteine-rich secretory protein LCCL domain-containing 1	GO:0060325	UniProt	Homo sapiens	IMP		PMID:21254358	20140409
+TBX1	T-box transcription factor TBX1	GO:0060325	UniProt	Homo sapiens	ISS	UniProtKB:P70323	GO_REF:0000024	20110815
+LEF1	Lymphoid enhancer-binding factor 1	GO:0060325	Ensembl	Homo sapiens	IEA	UniProtKB:P27782|ensembl:ENSMUSP00000029611	GO_REF:0000107	20211009
+TGFB3	Transforming growth factor beta-3 proprotein	GO:0060325	BHF-UCL	Homo sapiens	IMP		PMID:12651933	20110525
+EP300	Histone acetyltransferase	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:B2RWS6|ensembl:ENSMUSP00000066789	GO_REF:0000107	20211009
+RAB3GAP1	Rab3 GTPase-activating protein catalytic subunit	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:Q15042|ensembl:ENSP00000264158	GO_REF:0000107	20211009
+TGFBR2	TGF-beta receptor type-2	GO:0060325	AgBase	Gallus gallus	ISM		PMID:12589747	20130311
+ARID5B	AT-rich interactive domain-containing protein 5B	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:Q8BM75|ensembl:ENSMUSP00000151227	GO_REF:0000107	20211009
+LEF1	HMG box domain-containing protein	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:P27782|ensembl:ENSMUSP00000029611	GO_REF:0000107	20211009
+COL1A1	Collagen alpha-1(I) chain	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:P11087|ensembl:ENSMUSP00000001547	GO_REF:0000107	20211009
+STRA6	Receptor for retinol uptake STRA6	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:Q9BX79|ensembl:ENSP00000378537	GO_REF:0000107	20211009
+MMP2	72 kDa type IV collagenase	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:P33434|ensembl:ENSMUSP00000034187	GO_REF:0000107	20211009
+ANKRD11	Ankyrin_rpt-contain_dom domain-containing protein	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:Q6UB99|ensembl:ENSP00000301030	GO_REF:0000107	20211009
+PDGFRA	Platelet-derived growth factor receptor alpha	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:P26618|ensembl:ENSMUSP00000127173	GO_REF:0000107	20211009
+CRISPLD2	Uncharacterized protein	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:Q9H0B8|ensembl:ENSP00000262424	GO_REF:0000107	20211009
+CSRNP1	CSRNP_N domain-containing protein	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:P59054|ensembl:ENSMUSP00000149214	GO_REF:0000107	20211009
+SGPL1	Uncharacterized protein	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:Q8R0X7|ensembl:ENSMUSP00000112975	GO_REF:0000107	20211009
+DKK4	Dickkopf_N domain-containing protein	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:O54908|ensembl:ENSMUSP00000025803	GO_REF:0000107	20211009
+GHOX-7	Homeobox protein GHOX-7	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:P13297|ensembl:ENSMUSP00000058354	GO_REF:0000107	20211009
+GHOX-7	Homeobox protein GHOX-7	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:P28360|ensembl:ENSP00000372170	GO_REF:0000107	20211009
+TGFB3	Transforming growth factor beta-3 proprotein	GO:0060325	AgBase	Gallus gallus	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+PAX9	Paired box protein Pax-9	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:P47242|ensembl:ENSMUSP00000117928	GO_REF:0000107	20211009
+SCX	Basic helix-loop-helix transcription factor scleraxis	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:Q64124|ensembl:ENSMUSP00000043668	GO_REF:0000107	20211009
+DLX5	Homeobox protein DLX-5	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:P70396|ensembl:ENSMUSP00000052559	GO_REF:0000107	20211009
+PTPN11	Tyrosine-protein phosphatase non-receptor type 11	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:Q06124|ensembl:ENSP00000340944	GO_REF:0000107	20211009
+Tgfb3	transforming growth factor, beta 3	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:98727	RGD:1624291	20110826
+Tgfb3	transforming growth factor, beta 3	GO:0060325	AgBase	Rattus norvegicus	ISS	UniProtKB:P10600	GO_REF:0000024|RGD:1600115	20141202
+Tgfb3	transforming growth factor, beta 3	GO:0060325	RGD	Rattus norvegicus	ISO	UniProtKB:P10600	RGD:1624291	20110525
+Crebbp	CREB binding protein	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:1098280	RGD:1624291	20181126
+Ski	SKI proto-oncogene	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:98310	RGD:1624291	20091218
+Cdk2ap1	cyclin-dependent kinase 2 associated protein 1	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:1202069	RGD:1624291	20110222
+Arid5b	AT-rich interaction domain 5B	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:2175912	RGD:1624291	20090223
+specc1la	sperm antigen with calponin homology and coiled-coil domains 1-like a	GO:0060325	MGI	Danio rerio	IDA		PMID:21703590|ZFIN:ZDB-PUB-110629-38	20150429
+aldh1a2	aldehyde dehydrogenase 1 family, member A2	GO:0060325	ZFIN	Danio rerio	IMP	ZFIN:ZDB-MRPHLNO-050316-2	PMID:22125274	20120921
+specc1	sperm antigen with calponin homology and coiled-coil domains 1	GO:0060325	ZFIN	Danio rerio	IMP	ZFIN:ZDB-MRPHLNO-110804-5	PMID:21703590	20110816
+edn1	endothelin 1	GO:0060325	ZFIN	Danio rerio	IGI	ZFIN:ZDB-GENO-980202-1068|ZFIN:ZDB-MRPHLNO-041207-6	PMID:20431122	20100804
+edn1	endothelin 1	GO:0060325	ZFIN	Danio rerio	IMP	ZFIN:ZDB-GENO-980202-1068	PMID:20431122	20100804
+edn1	endothelin 1	GO:0060325	ZFIN	Danio rerio	IGI	ZFIN:ZDB-GENO-100727-7	PMID:20431122	20100804
+pitx2	paired-like homeodomain 2	GO:0060325	ZFIN	Danio rerio	IMP	ZFIN:ZDB-MRPHLNO-120911-5	PMID:22125274	20120921
+jag1b	jagged canonical Notch ligand 1b	GO:0060325	ZFIN	Danio rerio	IGI	ZFIN:ZDB-GENO-100727-7	PMID:20431122	20100804
+jag1b	jagged canonical Notch ligand 1b	GO:0060325	ZFIN	Danio rerio	IMP	ZFIN:ZDB-GENO-100604-1	PMID:20431122	20100804
+grhl3	grainyhead-like transcription factor 3	GO:0060325	ZFIN	Danio rerio	IMP	ZFIN:ZDB-MRPHLNO-141230-25	PMID:24915580	20150107
+Msx1	msh homeobox 1	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:97168	RGD:1624291	20110531
+Msx1	msh homeobox 1	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:97168	RGD:1624291	20110525
+Msx1	msh homeobox 1	GO:0060325	RGD	Rattus norvegicus	ISO	UniProtKB:P28360	RGD:1624291	20110525
+Kat6a	lysine acetyltransferase 6A	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:2442415	RGD:1624291	20130220
+Col1a1	collagen type I alpha 1 chain	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:88467	RGD:1624291	20081222
+Schip1	schwannomin interacting protein 1	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:1353557	RGD:1624291	20090223
+Csrnp1	cysteine and serine rich nuclear protein 1	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:2387989	RGD:1624291	20090223
+Crispld1	cysteine-rich secretory protein LCCL domain containing 1	GO:0060325	RGD	Rattus norvegicus	ISO	UniProtKB:Q9H336	RGD:1624291	20140409
+Crispld2	cysteine-rich secretory protein LCCL domain containing 2	GO:0060325	RGD	Rattus norvegicus	ISO	UniProtKB:Q9H0B8	RGD:1624291	20140409
+Ptpn11	protein tyrosine phosphatase, non-receptor type 11	GO:0060325	RGD	Rattus norvegicus	ISO	UniProtKB:Q06124	RGD:1624291	20130301
+Lrp6	LDL receptor related protein 6	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:1298218	RGD:1624291	20100922
+Pax9	paired box 9	GO:0060325	MGI	Mus musculus	IGI	MGI:MGI:97168	MGI:MGI:4453942|PMID:20123092	20110603
+Nog	noggin	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:1862000	MGI:MGI:3640733|PMID:16712836	20110523
+Stra6	stimulated by retinoic acid gene 6	GO:0060325	MGI	Mus musculus	ISO	UniProtKB:Q9BX79	MGI:MGI:4834177|GO_REF:0000096	20110503
+Ptpn11	protein tyrosine phosphatase, non-receptor type 11	GO:0060325	MGI	Mus musculus	ISO	UniProtKB:Q06124	MGI:MGI:4834177|GO_REF:0000096	20130301
+Zfp950	zinc finger protein 950	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:3526859	MGI:MGI:3696608|PMID:17143286	20090223
+Lef1	lymphoid enhancer binding factor 1	GO:0060325	MGI	Mus musculus	IGI	MGI:MGI:1202879	MGI:MGI:3722225|PMID:17699607	20110211
+Ep300	E1A binding protein p300	GO:0060325	ARUK-UCL	Mus musculus	IMP		MGI:MGI:4421646|PMID:19822209	20181126
+Nog	noggin	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:104327	RGD:1624291	20110523
+Nog	noggin	GO:0060325	Ensembl	Rattus norvegicus	IEA	UniProtKB:P97466|ensembl:ENSMUSP00000061427	GO_REF:0000107|RGD:1600115	20211009
+Twist2	twist family bHLH transcription factor 2	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:104685	RGD:1624291	20110721
+Tbx1	T-box transcription factor 1	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:98493	RGD:1624291	20110705
+Tbx1	T-box transcription factor 1	GO:0060325	UniProt	Rattus norvegicus	ISS	UniProtKB:P70323	GO_REF:0000024|RGD:1600115	20110815
+Lef1	lymphoid enhancer binding factor 1	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:96770	RGD:1624291	20110211
+Lef1	lymphoid enhancer binding factor 1	GO:0060325	Ensembl	Rattus norvegicus	IEA	UniProtKB:P27782|ensembl:ENSMUSP00000029611	GO_REF:0000107|RGD:1600115	20210612
+Plekha1	pleckstrin homology domain containing A1	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:2442213	RGD:1624291	20090223
+Pdgfra	platelet derived growth factor receptor alpha	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:97530	RGD:1624291	20090223
+Pdgfra	platelet derived growth factor receptor alpha	GO:0060325	Ensembl	Rattus norvegicus	IEA	UniProtKB:P26618|ensembl:ENSMUSP00000127173	GO_REF:0000107|RGD:1600115	20211009
+Rab3gap1	RAB3 GTPase activating protein catalytic subunit 1	GO:0060325	Ensembl	Rattus norvegicus	IEA	UniProtKB:Q15042|ensembl:ENSP00000264158	GO_REF:0000107|RGD:1600115	20210612
+Rab3gap1	RAB3 GTPase activating protein catalytic subunit 1	GO:0060325	RGD	Rattus norvegicus	ISO	UniProtKB:Q15042	RGD:1624291	20110713
+Tgfb1	transforming growth factor, beta 1	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:98725	RGD:1624291	20110826
+Mmp2	matrix metallopeptidase 2	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:97009	RGD:1624291	20081222
+Mmp2	matrix metallopeptidase 2	GO:0060325	Ensembl	Rattus norvegicus	IEA	UniProtKB:P33434|ensembl:ENSMUSP00000034187	GO_REF:0000107|RGD:1600115	20211009
+Stra6	signaling receptor and transporter of retinol STRA6	GO:0060325	Ensembl	Rattus norvegicus	IEA	UniProtKB:Q9BX79|ensembl:ENSP00000378537	GO_REF:0000107|RGD:1600115	20210612
+Stra6	signaling receptor and transporter of retinol STRA6	GO:0060325	RGD	Rattus norvegicus	ISO	UniProtKB:Q9BX79	RGD:1624291	20110503
+Specc1l	sperm antigen with calponin homology and coiled-coil domains 1-like	GO:0060325	MGI	Mus musculus	ISO	UniProtKB:Q2KN93	MGI:MGI:5433266|PMID:21703590	20150429
+TGF-beta 3	Latency-associated peptide	GO:0060325	AgBase	Ovis aries	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+Tgfb2	transforming growth factor, beta 2	GO:0060325	UniProt	Mus musculus	IEP		PMID:18498113	20110826
+Ep300	E1A binding protein p300	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:1276116	RGD:1624291	20181126
+Asph	aspartate-beta-hydroxylase	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:1914186	RGD:1624291	20081110
+Dkk1	dickkopf WNT signaling pathway inhibitor 1	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:1329040	RGD:1624291	20100924
+WNT11	Protein Wnt-11	GO:0060325	AgBase	Gallus gallus	IMP		PMID:25008326	20151202
+PLEKHA1	Uncharacterized protein	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:Q8BUL6|ensembl:ENSMUSP00000074675	GO_REF:0000107	20211009
+ASPH	Aspartyl/asparaginyl beta-hydroxylase	GO:0060325	Ensembl	Homo sapiens	IEA	UniProtKB:Q8BSY0|ensembl:ENSMUSP00000077273	GO_REF:0000107	20211009
+EP300	Histone acetyltransferase	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:B2RWS6|ensembl:ENSMUSP00000066789	GO_REF:0000107	20211009
+LEF1	HMG box domain-containing protein	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:P27782|ensembl:ENSMUSP00000029611	GO_REF:0000107	20211009
+NOG	Noggin	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:P97466|ensembl:ENSMUSP00000061427	GO_REF:0000107	20211009
+EP300	Histone acetyltransferase p300	GO:0060325	Ensembl	Homo sapiens	IEA	UniProtKB:B2RWS6|ensembl:ENSMUSP00000066789	GO_REF:0000107	20211009
+TGFB1	Latency-associated peptide	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:P04202|ensembl:ENSMUSP00000002678	GO_REF:0000107	20211009
+CRISPLD1	Cysteine-rich secretory protein LCCL domain-containing 1	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:Q9H336|ensembl:ENSP00000262207	GO_REF:0000107	20211009
+TIPARP	Uncharacterized protein	GO:0060325	Ensembl	Gallus gallus	IEA	UniProtKB:Q8C1B2|ensembl:ENSMUSP00000048051	GO_REF:0000107	20211009
+PDGFRA	Platelet-derived growth factor receptor alpha	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:P26618|ensembl:ENSMUSP00000127173	GO_REF:0000107	20211009
+TGFB3	Transforming growth factor beta	GO:0060325	AgBase	Bos taurus	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+CSRNP1	CSRNP_N domain-containing protein	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:P59054|ensembl:ENSMUSP00000149214	GO_REF:0000107	20211009
+CRISPLD2	Cysteine-rich secretory protein LCCL domain-containing 2	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:Q9H0B8|ensembl:ENSP00000262424	GO_REF:0000107	20211009
+PTPN11	Tyrosine-protein phosphatase non-receptor type	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:Q06124|ensembl:ENSP00000340944	GO_REF:0000107	20211009
+SCX	BHLH domain-containing protein	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:Q64124|ensembl:ENSMUSP00000043668	GO_REF:0000107	20211009
+DLX5	Homeobox domain-containing protein	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:P70396|ensembl:ENSMUSP00000052559	GO_REF:0000107	20211009
+PAX9	Paired box protein Pax-9	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:P47242|ensembl:ENSMUSP00000117928	GO_REF:0000107	20211009
+RRAS	RAS related	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:P10301|ensembl:ENSP00000246792	GO_REF:0000107	20211009
+CRISPLD1	CRISPLD1 protein	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:Q9H336|ensembl:ENSP00000262207	GO_REF:0000107	20211009
+PLEKHA1	Pleckstrin homology domain containing A1	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:Q8BUL6|ensembl:ENSMUSP00000074675	GO_REF:0000107	20211009
+STRA6	Receptor for retinol uptake STRA6	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:Q9BX79|ensembl:ENSP00000378537	GO_REF:0000107	20211009
+MMP2	72 kDa gelatinase	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:P33434|ensembl:ENSMUSP00000034187	GO_REF:0000107	20211009
+SGPL1	Sphingosine-1-phosphate lyase 1	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:Q8R0X7|ensembl:ENSMUSP00000112975	GO_REF:0000107	20211009
+COL1A1	Collagen alpha-1(I) chain	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:P11087|ensembl:ENSMUSP00000001547	GO_REF:0000107	20211009
+MSX1	Homeobox domain-containing protein	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:P13297|ensembl:ENSMUSP00000058354	GO_REF:0000107	20211009
+MSX1	Homeobox domain-containing protein	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:P28360|ensembl:ENSP00000372170	GO_REF:0000107	20211009
+RAB3GAP1	Rab3 GTPase-activating protein catalytic subunit	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:Q15042|ensembl:ENSP00000264158	GO_REF:0000107	20211009
+NIPBL	Nipped-B protein	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:Q6KC79|ensembl:ENSP00000282516	GO_REF:0000107	20211009
+TIPARP	TCDD inducible poly(ADP-ribose) polymerase	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:Q8C1B2|ensembl:ENSMUSP00000048051	GO_REF:0000107	20211009
+ANKRD11	Ankyrin repeat domain 11	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:Q6UB99|ensembl:ENSP00000301030	GO_REF:0000107	20211009
+ARID5B	AT-rich interactive domain-containing protein 5B	GO:0060325	Ensembl	Bos taurus	IEA	UniProtKB:Q8BM75|ensembl:ENSMUSP00000151227	GO_REF:0000107	20211009
+CSRNP1	CSRNP_N domain-containing protein	GO:0060325	Ensembl	Canis lupus familiaris	IEA	UniProtKB:P59054|ensembl:ENSMUSP00000149214	GO_REF:0000107	20211009
+NIPBL	Nipped-B protein	GO:0060325	Ensembl	Canis lupus familiaris	IEA	UniProtKB:Q6KC79|ensembl:ENSP00000282516	GO_REF:0000107	20211009
+CRISPLD2	Cysteine rich secretory protein LCCL domain containing 2	GO:0060325	Ensembl	Canis lupus familiaris	IEA	UniProtKB:Q9H0B8|ensembl:ENSP00000262424	GO_REF:0000107	20211009
+DLX5	Homeobox domain-containing protein	GO:0060325	Ensembl	Canis lupus familiaris	IEA	UniProtKB:P70396|ensembl:ENSMUSP00000052559	GO_REF:0000107	20211009
+TBX1	T-box transcription factor 1	GO:0060325	UniProt	Canis lupus familiaris	ISS	UniProtKB:P70323	GO_REF:0000024	20110815
+TGFB3	Latency-associated peptide	GO:0060325	AgBase	Canis lupus familiaris	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+B9D2	Transforming growth factor beta	GO:0060325	Ensembl	Canis lupus familiaris	IEA	UniProtKB:P04202|ensembl:ENSMUSP00000002678	GO_REF:0000107	20211009
+ARID5B	AT-rich interactive domain-containing protein 5B	GO:0060325	Ensembl	Canis lupus familiaris	IEA	UniProtKB:Q8BM75|ensembl:ENSMUSP00000151227	GO_REF:0000107	20211009
+PLEKHA1	Pleckstrin homology domain containing A1	GO:0060325	Ensembl	Canis lupus familiaris	IEA	UniProtKB:Q8BUL6|ensembl:ENSMUSP00000074675	GO_REF:0000107	20211009
+TIPARP	TCDD inducible poly(ADP-ribose) polymerase	GO:0060325	Ensembl	Canis lupus familiaris	IEA	UniProtKB:Q8C1B2|ensembl:ENSMUSP00000048051	GO_REF:0000107	20211009
+LEF1	HMG box domain-containing protein	GO:0060325	Ensembl	Canis lupus familiaris	IEA	UniProtKB:P27782|ensembl:ENSMUSP00000029611	GO_REF:0000107	20211009
+TGFB3	Latency-associated peptide	GO:0060325	AgBase	Gallus gallus	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+Tcf7l2	transcription factor 7 like 2	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:1202879	RGD:1624291	20110211
+Nipbl	NIPBL, cohesin loading factor	GO:0060325	RGD	Rattus norvegicus	ISO	UniProtKB:Q6KC79	RGD:1624291	20100127
+Tiparp	TCDD-inducible poly(ADP-ribose) polymerase	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:2159210	RGD:1624291	20090223
+Zfp950	zinc finger protein 950	GO:0060325	Ensembl	Rattus norvegicus	IEA	UniProtKB:A0A0U1RQ46|ensembl:ENSMUSP00000146243	GO_REF:0000107|RGD:1600115	20211009
+Scx	scleraxis bHLH transcription factor	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:102934	RGD:1624291	20110826
+Tgfb2	transforming growth factor, beta 2	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:98726	RGD:1624291	20110826
+Rras	RAS related	GO:0060325	RGD	Rattus norvegicus	ISO	UniProtKB:P10301	RGD:1624291	20140912
+Sgpl1	sphingosine-1-phosphate lyase 1	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:1261415	RGD:1624291	20090223
+Tfap2a	transcription factor AP-2 alpha	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:104671	RGD:1624291	20110721
+Pax9	paired box 9	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:97493	RGD:1624291	20110603
+Pax9	paired box 9	GO:0060325	Ensembl	Rattus norvegicus	IEA	UniProtKB:P47242|ensembl:ENSMUSP00000117928	GO_REF:0000107|RGD:1600115	20210612
+Dlx5	distal-less homeobox 5	GO:0060325	RGD	Rattus norvegicus	ISO	MGI:101926	RGD:1624291	20110531
+Dlx5	distal-less homeobox 5	GO:0060325	Ensembl	Rattus norvegicus	IEA	UniProtKB:P70396|ensembl:ENSMUSP00000052559	GO_REF:0000107|RGD:1600115	20211009
+Tiparp	TCDD-inducible poly(ADP-ribose) polymerase	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:3526866	MGI:MGI:3696608|PMID:17143286	20090223
+Ankrd11	ankyrin repeat domain 11	GO:0060325	RGD	Rattus norvegicus	ISO	UniProtKB:Q6UB99	RGD:1624291	20121106
+Lrp6	low density lipoprotein receptor-related protein 6	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:2156191	MGI:MGI:4358010|PMID:19700620	20100920
+Lrp6	low density lipoprotein receptor-related protein 6	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:4415718	MGI:MGI:4413396|PMID:19653321	20100922
+Tbx1	T-box 1	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:2179191	MGI:MGI:4822099|PMID:20501333	20110705
+SGPL1	Sphingosine-1-phosphate lyase 1	GO:0060325	Ensembl	Homo sapiens	IEA	UniProtKB:Q8R0X7|ensembl:ENSMUSP00000112975	GO_REF:0000107	20211009
+Tgfb3	transforming growth factor, beta 3	GO:0060325	MGI	Mus musculus	ISO	UniProtKB:P10600	MGI:MGI:4834177|GO_REF:0000096	20110525
+Tgfb3	transforming growth factor, beta 3	GO:0060325	UniProt	Mus musculus	IEP		PMID:18498113	20110826
+Tgfb1	transforming growth factor, beta 1	GO:0060325	UniProt	Mus musculus	IEP		PMID:18498113	20110826
+Col1a1	collagen, type I, alpha 1	GO:0060325	MGI	Mus musculus	IGI	MGI:MGI:97009	MGI:MGI:3710444|PMID:17440987	20081222
+Ski	ski sarcoma viral oncogene homolog (avian)	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:2177555	MGI:MGI:2176418|PMID:11731796	20091218
+Ski	ski sarcoma viral oncogene homolog (avian)	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:2177555	MGI:MGI:1095997|PMID:9284043	20091218
+Scx	scleraxis	GO:0060325	UniProt	Mus musculus	IEP		PMID:18498113	20110826
+Schip1	schwannomin interacting protein 1	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:3526869	MGI:MGI:3696608|PMID:17143286	20090223
+Csrnp1	cysteine-serine-rich nuclear protein 1	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:3526868	MGI:MGI:3696608|PMID:17143286	20090223
+Rras	related RAS viral (r-ras) oncogene	GO:0060325	MGI	Mus musculus	ISO	UniProtKB:P10301	MGI:MGI:4834177|GO_REF:0000096	20140912
+Kat6a	K(lysine) acetyltransferase 6A	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:4418468	MGI:MGI:5442217|PMID:22921202	20130220
+Kat6a	K(lysine) acetyltransferase 6A	GO:0060325	MGI	Mus musculus	IGI	MGI:MGI:98493	MGI:MGI:5442217|PMID:22921202	20130220
+Nipbl	NIPBL cohesin loading factor	GO:0060325	MGI	Mus musculus	ISO	UniProtKB:Q6KC79	MGI:MGI:4834177|GO_REF:0000096	20100302
+Arid5b	AT rich interactive domain 5B (MRF1-like)	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:3526852	MGI:MGI:3696608|PMID:17143286	20090223
+Plekha1	pleckstrin homology domain containing, family A (phosphoinositide binding specific) member 1	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:3526857	MGI:MGI:3696608|PMID:17143286	20090223
+Rab3gap1	RAB3 GTPase activating protein subunit 1	GO:0060325	MGI	Mus musculus	ISO	UniProtKB:Q15042	MGI:MGI:4834177|GO_REF:0000096	20110713
+Dkk1	dickkopf WNT signaling pathway inhibitor 1	GO:0060325	MGI	Mus musculus	IMP		MGI:MGI:3722225|PMID:17699607	20100924
+Dlx5	distal-less homeobox 5	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:2180474	MGI:MGI:3611627|PMID:16330189	20110531
+Asph	aspartate-beta-hydroxylase	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:2179287	MGI:MGI:2177999|PMID:11773073	20081110
+Crispld1	cysteine-rich secretory protein LCCL domain containing 1	GO:0060325	MGI	Mus musculus	ISO	UniProtKB:Q9H336	MGI:MGI:4834177|GO_REF:0000096	20140409
+Ankrd11	ankyrin repeat domain 11	GO:0060325	MGI	Mus musculus	ISO	UniProtKB:Q6UB99	MGI:MGI:2154458|GO_REF:0000008	20121106
+Pdgfra	platelet derived growth factor receptor, alpha polypeptide	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:1926728	MGI:MGI:3696608|PMID:17143286	20090223
+Sgpl1	sphingosine phosphate lyase 1	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:3526851	MGI:MGI:3696608|PMID:17143286	20090223
+Crispld2	cysteine-rich secretory protein LCCL domain containing 2	GO:0060325	MGI	Mus musculus	ISO	UniProtKB:Q9H0B8	MGI:MGI:4834177|GO_REF:0000096	20140409
+Msx1	msh homeobox 1	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:1933766	MGI:MGI:3611627|PMID:16330189	20110531
+Msx1	msh homeobox 1	GO:0060325	MGI	Mus musculus	ISO	UniProtKB:P28360	MGI:MGI:4834177|GO_REF:0000096	20110525
+Msx1	msh homeobox 1	GO:0060325	BHF-UCL	Mus musculus	IMP		MGI:MGI:3688967|PMID:11369996	20110525
+Msx1	msh homeobox 1	GO:0060325	MGI	Mus musculus	IGI	MGI:MGI:97493	MGI:MGI:4453942|PMID:20123092	20110603
+Mmp2	matrix metallopeptidase 2	GO:0060325	MGI	Mus musculus	IGI	MGI:MGI:88467	MGI:MGI:3710444|PMID:17440987	20081222
+PANDA_009394	Uncharacterized protein	GO:0060325	UniProt	Ailuropoda melanoleuca	ISS	UniProtKB:P70323	GO_REF:0000024	20110815
+D623_10012957	Transforming growth factor beta	GO:0060325	AgBase	Myotis brandtii	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Latency-associated peptide	GO:0060325	AgBase	Neogale vison	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Latency-associated peptide	GO:0060325	AgBase	Equus caballus	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Transforming growth factor beta	GO:0060325	AgBase	Loxodonta africana	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Latency-associated peptide	GO:0060325	AgBase	Ficedula albicollis	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Transforming growth factor beta	GO:0060325	AgBase	Gorilla gorilla gorilla	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+M91_01518	Latency-associated peptide	GO:0060325	AgBase	Bos mutus	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Transforming growth factor beta	GO:0060325	AgBase	Macaca mulatta	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+Cdk2ap1	CDK2 (cyclin-dependent kinase 2)-associated protein 1	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:3512185	MGI:MGI:3837115|PMID:19229340	20110222
+Twist2	twist basic helix-loop-helix transcription factor 2	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:3044412	MGI:MGI:4949824|PMID:20574024	20110721
+Twist2	twist basic helix-loop-helix transcription factor 2	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:3044412	MGI:MGI:4939992|PMID:20691403	20110721
+Tfap2a	transcription factor AP-2, alpha	GO:0060325	MGI	Mus musculus	IMP	MGI:MGI:2176682	MGI:MGI:1313057|PMID:9811866	20110721
+Tcf7l2	transcription factor 7 like 2, T cell specific, HMG box	GO:0060325	MGI	Mus musculus	IGI	MGI:MGI:96770	MGI:MGI:3722225|PMID:17699607	20110211
+Crebbp	CREB binding protein	GO:0060325	ARUK-UCL	Mus musculus	IMP		MGI:MGI:4421646|PMID:19822209	20181126
+DLX5	Homeobox domain-containing protein	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:P70396|ensembl:ENSMUSP00000052559	GO_REF:0000107	20211009
+CRISPLD2	Cysteine rich secretory protein LCCL domain containing 2	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:Q9H0B8|ensembl:ENSP00000262424	GO_REF:0000107	20211009
+RRAS	RAS related	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:P10301|ensembl:ENSP00000246792	GO_REF:0000107	20211009
+MSX1	Homeobox domain-containing protein	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:P13297|ensembl:ENSMUSP00000058354	GO_REF:0000107	20211009
+MSX1	Homeobox domain-containing protein	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:P28360|ensembl:ENSP00000372170	GO_REF:0000107	20211009
+NOG	Noggin	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:P97466|ensembl:ENSMUSP00000061427	GO_REF:0000107	20211009
+PDGFRA	Platelet-derived growth factor receptor alpha	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:P26618|ensembl:ENSMUSP00000127173	GO_REF:0000107	20211009
+CRISPLD1	Cysteine rich secretory protein LCCL domain containing 1	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:Q9H336|ensembl:ENSP00000262207	GO_REF:0000107	20211009
+ANKRD11	Ankyrin repeat domain 11	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:Q6UB99|ensembl:ENSP00000301030	GO_REF:0000107	20211009
+TGFB3	Latency-associated peptide	GO:0060325	AgBase	Sus scrofa	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+COL1A1	Collagen type I alpha 1 chain	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:P11087|ensembl:ENSMUSP00000001547	GO_REF:0000107	20211009
+TIPARP	Uncharacterized protein	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:Q8C1B2|ensembl:ENSMUSP00000048051	GO_REF:0000107	20211009
+CSRNP1	CSRNP_N domain-containing protein	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:P59054|ensembl:ENSMUSP00000149214	GO_REF:0000107	20211009
+PTPN11	Tyrosine-protein phosphatase non-receptor type	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:Q06124|ensembl:ENSP00000340944	GO_REF:0000107	20211009
+STRA6	Receptor for retinol uptake STRA6	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:Q9BX79|ensembl:ENSP00000378537	GO_REF:0000107	20211009
+PAX9	Paired box protein Pax-9	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:P47242|ensembl:ENSMUSP00000117928	GO_REF:0000107	20211009
+TGFB3	Transforming growth factor beta-3 proprotein	GO:0060325	AgBase	Sus scrofa	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB1	Transforming growth factor beta-1 proprotein	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:P04202|ensembl:ENSMUSP00000002678	GO_REF:0000107	20211009
+MMP2	72 kDa gelatinase	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:P33434|ensembl:ENSMUSP00000034187	GO_REF:0000107	20211009
+EP300	Histone acetyltransferase	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:B2RWS6|ensembl:ENSMUSP00000066789	GO_REF:0000107	20211009
+LEF1	HMG box domain-containing protein	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:P27782|ensembl:ENSMUSP00000029611	GO_REF:0000107	20211009
+PLEKHA1	Pleckstrin homology domain containing A1	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:Q8BUL6|ensembl:ENSMUSP00000074675	GO_REF:0000107	20211009
+ARID5B	AT-rich interactive domain-containing protein 5B	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:Q8BM75|ensembl:ENSMUSP00000151227	GO_REF:0000107	20211009
+RAB3GAP1	Rab3 GTPase-activating protein catalytic subunit	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:Q15042|ensembl:ENSP00000264158	GO_REF:0000107	20211009
+SGPL1	Sphingosine-1-phosphate lyase 1	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:Q8R0X7|ensembl:ENSMUSP00000112975	GO_REF:0000107	20211009
+NIPBL	Nipped-B protein	GO:0060325	Ensembl	Sus scrofa	IEA	UniProtKB:Q6KC79|ensembl:ENSP00000282516	GO_REF:0000107	20211009
+TGFB3	Transforming growth factor beta	GO:0060325	AgBase	Felis catus	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Latency-associated peptide	GO:0060325	AgBase	Ailuropoda melanoleuca	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+GW7_03513	Latency-associated peptide	GO:0060325	AgBase	Heterocephalus glaber	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Transforming growth factor beta	GO:0060325	AgBase	Callithrix jacchus	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+K9IKD5	Latency-associated peptide	GO:0060325	AgBase	Desmodus rotundus	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+U3FVV0	Transforming growth factor beta	GO:0060325	AgBase	Micrurus fulvius	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Transforming growth factor beta	GO:0060325	AgBase	Mustela putorius furo	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Latency-associated peptide	GO:0060325	AgBase	Pelodiscus sinensis	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Latency-associated peptide	GO:0060325	AgBase	Ophiophagus hannah	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Latency-associated peptide	GO:0060325	AgBase	Oryctolagus cuniculus	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+AS27_04484	Latency-associated peptide	GO:0060325	AgBase	Aptenodytes forsteri	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+PsLEF-1	HMG box domain-containing protein	GO:0060325	AgBase	Pelodiscus sinensis	ISS	UniProtKB:P27782	PMID:15642085	20130311
+G1NJH0	Transforming growth factor beta	GO:0060325	AgBase	Meleagris gallopavo	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TBX1	T-box transcription factor 1	GO:0060325	UniProt	Callithrix jacchus	ISS	UniProtKB:P70323	GO_REF:0000024	20110815
+UY3_11148	Latency-associated peptide	GO:0060325	AgBase	Chelonia mydas	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TREES_T100012209	Transforming growth factor beta	GO:0060325	AgBase	Tupaia chinensis	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Transforming growth factor beta	GO:0060325	AgBase	Pan troglodytes	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+J3SFF1	Transforming growth factor beta	GO:0060325	AgBase	Crotalus adamanteus	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Transforming growth factor beta	GO:0060325	AgBase	Macaca fascicularis	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+I79_009440	Transforming growth factor beta	GO:0060325	AgBase	Cricetulus griseus	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+CB1_000743072	Transforming growth factor beta	GO:0060325	AgBase	Camelus ferus	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Transforming growth factor beta	GO:0060325	AgBase	Otolemur garnettii	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Latency-associated peptide	GO:0060325	AgBase		ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	TGFb_propeptide domain-containing protein	GO:0060325	AgBase	Ovis aries	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Transforming growth factor beta	GO:0060325	AgBase	Ictidomys tridecemlineatus	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Transforming growth factor beta	GO:0060325	AgBase	Ovis aries	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Transforming growth factor beta	GO:0060325	AgBase	Myotis lucifugus	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+ARID5B	AT-rich interactive domain-containing protein 5B	GO:0060325	Ensembl	Homo sapiens	IEA	UniProtKB:Q8BM75|ensembl:ENSMUSP00000151227	GO_REF:0000107	20211009
+ANKRD11	Ankyrin repeat domain-containing protein 11	GO:0060325	MGI	Homo sapiens	IMP		PMID:21782149	20121106
+PTPN11	Tyrosine-protein phosphatase non-receptor type 11	GO:0060325	BHF-UCL	Homo sapiens	IMP		PMID:11704759	20130301
+TGFB3	Transforming growth factor beta	GO:0060325	AgBase	Nomascus leucogenys	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Transforming growth factor beta	GO:0060325	AgBase	Anolis carolinensis	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Transforming growth factor beta	GO:0060325	AgBase	Pongo abelii	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+G9KT42	Latency-associated peptide	GO:0060325	AgBase	Mustela putorius furo	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+Anapl_01289	Latency-associated peptide	GO:0060325	AgBase	Anas platyrhynchos	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+TGFB3	Transforming growth factor beta	GO:0060325	AgBase	Monodelphis domestica	ISS	UniProtKB:P10600	GO_REF:0000024	20141202
+Dio3	iodothyronine deiodinase 3	GO:0097474	RGD	Rattus norvegicus	ISO	MGI:1306782	RGD:1624291	20190827
+Thrb	thyroid hormone receptor beta	GO:0097474	RGD	Rattus norvegicus	ISO	MGI:98743	RGD:1624291	20190827
+Dio3	deiodinase, iodothyronine type III	GO:0097474	MGI	Mus musculus	IMP		MGI:MGI:4441081|PMID:20203194	20190827
+Thrb	thyroid hormone receptor beta	GO:0097474	MGI	Mus musculus	IMP		MGI:MGI:4441081|PMID:20203194	20190827

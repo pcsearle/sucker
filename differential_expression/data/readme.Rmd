@@ -9,6 +9,10 @@ output: html_document
 
 Description: 
 
+go_annotations - Gene annotations generated using AmiGO2 on Geneontology.org
+  development+craniofacial.tsv
+  develompent+face.tsv
+
 sample_info - Information of which RNA-seq files go with which week for Salmon analysis. When the files are downloaded from NCBI, they need to be renamed to match the names in these files. 
   june_samples.txt - June sucker
   straw_samples.txt - Strawberry Reservoir Utah sucker

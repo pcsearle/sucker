@@ -71,97 +71,58 @@ Generate list of transcripts that are annotated and share gene names across all 
 library(tidyverse)
 library(dplyr)
 
-# File Paths
+fltr_l = list()
 
-june_path <- "./data/predicted_genes/june/out.emapper.annotations.xlsx"
-utah_path <- "./data/predicted_genes/utah/out.emapper.annotations.xlsx"
-straw_path <- "./data/predicted_genes/straw/out.emapper.annotations.xlsx"
-
-# Filtered transcripts 
-
-june_fltrd <- readxl::read_excel(june_path, skip = 2) %>% 
-  dplyr::rename(query = "query", gene = "Preferred_name", evalue = "evalue", score = "score") %>%
-  drop_na() %>% select(query, gene, evalue, score) %>% # remove last 3 rows
-  mutate(across('query', str_replace, '_\\d', '')) %>% # rename transcripts
-  mutate(evalue = as.numeric(evalue)) %>% filter(gene != "-") %>% #remove genes without names
-  group_by(query) %>% slice_min(order_by = evalue) %>% 
-  # transcripts can have multiple annotations. Only keep one based off min evalue
-  mutate(geneL = tolower(gene))
-
-utah_fltrd <- readxl::read_excel(utah_path, skip = 2) %>% 
-  dplyr::rename(query = "query", gene = "Preferred_name", evalue = "evalue", score = "score") %>%
-  drop_na() %>% select(query, gene, evalue, score) %>% # remove last 3 rows
-  mutate(across('query', str_replace, '_\\d', '')) %>% # rename transcripts
-  mutate(evalue = as.numeric(evalue)) %>% filter(gene != "-") %>% #remove genes without names
-  group_by(query) %>% slice_min(order_by = evalue) %>% # only keep one annotation per transcript based off minimum evalue
-  mutate(geneL = tolower(gene))
-
-straw_fltrd <- readxl::read_excel(straw_path, skip = 2) %>% 
-  dplyr::rename(query = "query", gene = "Preferred_name", evalue = "evalue", score = "score") %>%
-  drop_na() %>% select(query, gene, evalue, score) %>% # remove last 3 rows
-  mutate(across('query', str_replace, '_\\d', '')) %>% # rename transcripts
-  mutate(evalue = as.numeric(evalue)) %>% filter(gene != "-") %>% #remove genes without names
-  group_by(query) %>% slice_min(order_by = evalue) %>% # only keep one annotation per transcript based off minimum eval
-  mutate(geneL = tolower(gene))
+for (lineage in c("june", "utah", "straw")) {
+  path <- paste0("./data/predicted_genes/", lineage, "/out.emapper.annotations.xlsx")
+  fltrd <- readxl::read_excel(path, skip = 2) %>% #skip header lines
+    dplyr::rename(query = "query", gene = "Preferred_name", evalue = "evalue", score = "score") %>% #rename columns
+    drop_na() %>% select(query, gene, evalue, score) %>% # remove last 3 rows, subset table
+    mutate(across('query', str_replace, '_\\d', '')) %>% # remove #'s added by eggnog-mapper to transcripts with multiple hits
+    mutate(evalue = as.numeric(evalue)) %>% filter(gene != "-") %>% #remove transcripts without predicted genes
+    group_by(query) %>% slice_max(order_by = score) # if transcripts have multiple hits, only retain annotation with highest score
+  fltr_l <- append(fltr_l, nrow(fltrd)) # save filtering results 
+  dup <- unique(fltrd$gene) %>% toupper() #identify duplicate genes with case differences
+  dup <- dup[duplicated(dup)] 
+  fltrd$value <- fltrd$gene %in% dup # generate column that identifies if gene is duplicated
+  fltrd <- mutate(fltrd, geneF = ifelse(value == TRUE, tolower(gene), gene)) #apply lowercase to duplicated genes only
+  newNm <- paste0(lineage, "_fltrd") 
+  assign(newNm, fltrd) #assign new name to df
+  rm(fltrd, dup, path, newNm, lineage) #cleanup
+}
 
 # Common genes between 3 lineages
 
-common_genes <- as_vector(intersect(intersect(june_fltrd$geneL, utah_fltrd$geneL), straw_fltrd$geneL))
+common_genes <- as_vector(intersect(intersect(june_fltrd$geneF, utah_fltrd$geneF), straw_fltrd$geneF))
 
+# Common transcriptomes
 
+june_final <- filter(june_fltrd, gene %in% common_genes)
+utah_final <- filter(utah_fltrd, gene %in% common_genes)
+straw_final <- filter(straw_fltrd, gene %in% common_genes)
 
-# Next steps
-
-# In the case where there are two gene names that are the same except for the case differences (for example,mmp2 vs MMP2), how can I change only those instances to lower case? 
-#Min eValue or max eValue....this is not very clear to me!
-
-common_genes[duplicated(common_genes)]
-
-common_genes_cnt <- as_tibble(common_genes) %>% mutate(value = toupper(value)) %>% summarise(count = n_distinct(value))
-
-test <- unique(june_fltrd$gene) %>% toupper()
-
-test[duplicated(test)]
-
-june_fltrd_up <- mutate(june_fltrd, gene = tolower(gene)) %>% summarise(count = n_distinct(gene))
-june_fltrd$gene[duplicated(june_fltrd$gene)]
-
+# Statistics
+fltr_rslts <- tibble(Category = "All", June = fltr_l[[1]], Utah = fltr_l[[2]], Straw = fltr_l[[3]])
+fltr_rslts <- add_row(fltr_rslts, Category = "Final", June = nrow(june_final), Utah = nrow(utah_final), Straw = nrow(straw_final))
+rm(fltr_l)
 
 # Write tables
 
-
 write.table(common_genes, "./data/predicted_genes/common_genes.txt", row.names = FALSE, col.names = FALSE, quote = FALSE)
 
-june_final <- june_eValue %>%
-  filter(geneName %in% common_genes)
+path <- "./data/transcriptomes/fltr1/transcript_IDs/"
 
-utah_final <- utah_eValue %>%
-  filter(geneName %in% common_genes)
-
-straw_final <- straw_eValue %>%
-  filter(geneName %in% common_genes)
-
-path <- "./data/transcriptomes/filtered/transcript_IDs/"
-
-# Statistics
-results <- tibble(Category = "All", June = nrow(june_all), Utah = nrow(utah_all), Straw = nrow(straw_all))
-results <- add_row(results, Category = "NA Removed", June = nrow(june_na_removed), Utah = nrow(utah_na_removed), Straw = nrow(straw_na_removed))
-results <- add_row(results, Category = "eValue (1e-30)", June = nrow(june_eValue), Utah = nrow(utah_eValue), Straw = nrow(straw_eValue))
-results <- add_row(results, Category = "Final", June = nrow(june_final), Utah = nrow(utah_final), Straw = nrow(straw_final))
-write_tsv(results, paste0(path, "filter_results.tsv"))
-
-write.table(june_final$queryID, paste0(path, "june_transcripts.lst"), row.names = FALSE)
-write.table(utah_final$queryID, paste0(path, "utah_transcripts.lst"), row.names = FALSE)
-write.table(straw_final$queryID, paste0(path, "straw_transcripts.lst"), row.names = FALSE)
+write.table(june_final$query, paste0(path, "june_transcripts.lst"), row.names = FALSE)
+write.table(utah_final$query, paste0(path, "utah_transcripts.lst"), row.names = FALSE)
+write.table(straw_final$query, paste0(path, "straw_transcripts.lst"), row.names = FALSE)
 ```
 
 Modify text in transcripts.lst files so seqtk will run.
 
 ```{bash}
 #!/bin/bash
-source ~/miniconda3/bin/activate 
 
-cd ~/github/sucker/differential_expression/data/transcriptomes/filtered/transcript_IDs/
+cd ~/github/sucker/differential_expression/data/transcriptomes/fltr1/transcript_IDs/
 
 # Remove x and "'s from transcripts.lst 
 
@@ -171,73 +132,18 @@ sed -i 's/\"//g' *.lst
 # Remove blank line at start of file
 
 sed -i '/^$/d' *.lst
+
+# Confirm no duplicate transcripts exist
+
+for file in *.lst;
+do
+  sort $file | uniq -d
+done
 ```
 
 ## Filtered Transcripts .fasta File
 
 Use seqtk to filter assembled transcriptomes using parameters described above. The unfiltered transcriptomes are available in this repository under data/transcriptomes/unfiltered/
-
-```{bash}
-#!/bin/bash
-source ~/miniconda3/bin/activate 
-
-# Installation 
-
-conda create -n seqtk seqtk
-conda activate seqtk
-
-# seqtk
-
-cd ~/github/sucker/differential_expression/data/transcriptomes/filtered/transcript_IDs/
-
-seqtk subseq ~/github/sucker/differential_expression/data/transcriptomes/unfiltered/june_transcripts.fasta june_transcripts.lst > ../filtered_transcripts/june_filtered_transcripts.fasta
-seqtk subseq ~/github/sucker/differential_expression/data/transcriptomes/unfiltered/utah_transcripts.fasta utah_transcripts.lst > ../filtered_transcripts/utah_filtered_transcripts.fasta
-seqtk subseq ~/github/sucker/differential_expression/data/transcriptomes/unfiltered/straw_transcripts.fasta straw_transcripts.lst > ../filtered_transcripts/straw_filtered_transcripts.fasta
-```
-
-## Generate first transcript to gene mapping file
-
-This file is used in the filtering step to associate each transcript with its gene annotation
-
-```{r}
-library(tidyverse)
-
-june_tx2gene <- select(june_final, queryID, geneName)
-colnames(june_tx2gene) <- c('txID', 'geneID')
-
-utah_tx2gene <- select(utah_final, queryID, geneName)
-colnames(utah_tx2gene) <- c('txID', 'geneID')
-
-straw_tx2gene <- select(straw_final, queryID, geneName)
-colnames(straw_tx2gene) <- c('txID', 'geneID')
-
-path <- "./data/transcriptomes/filtered/tx2gene/"
-
-write_tsv(june_tx2gene, paste0(path, "june_tx2gene.tsv"), col_names = T)
-write_tsv(utah_tx2gene, paste0(path, "utah_tx2gene.tsv"), col_names = T)
-write_tsv(straw_tx2gene, paste0(path, "straw_tx2gene.tsv"), col_names = T)
-```
-
-## Final Transcriptomes .fasta File
-
-Additional filtering is required in order to make the transcriptomes comparable among lineages at the transcript-level (i.e. each gene has the same number of transcripts represented for each lineage and each of these transcripts are similar between lineages).
-
-```{bash}
-#!/bin/bash
-
-# Issue with gene named '26-29-p' with seqtk. Renaming it solves the problem. Filtering ends of removing this gene in the end, so it doesn't need to be renamed later.
-
-cd ~/github/sucker/differential_expression/data/transcriptomes/filtered/tx2gene/
-
-sed -i 's/26-29-p/twentysixtwentyninep/g' *.tsv
-
-cd ~/github/sucker/differential_expression/data/predicted_genes/
-
-sed -i 's/26-29-p/twentysixtwentyninep/g' common_genes.txt
-
-```
-
-Use seqtk to pull all transcripts annotated as a gene from all lineages and combine into one fasta file
 
 ```{bash}
 #!/bin/bash
@@ -248,7 +154,48 @@ Use seqtk to pull all transcripts annotated as a gene from all lineages and comb
 
 conda activate seqtk
 
-cd ~/github/sucker/differential_expression/data/transcriptomes/filtered/multi_transcripts/
+cd ~/github/sucker/differential_expression/data/transcriptomes/fltr1/transcript_IDs/
+
+seqtk subseq ../../unfiltered/june_transcripts.fasta june_transcripts.lst > ../filtered_transcripts/june_fltr1.fasta
+seqtk subseq ../../unfiltered/utah_transcripts.fasta utah_transcripts.lst > ../filtered_transcripts/utah_fltr1.fasta
+seqtk subseq ../../unfiltered/straw_transcripts.fasta straw_transcripts.lst > ../filtered_transcripts/straw_fltr1.fasta
+```
+
+## Generate first transcript to gene mapping file
+
+This file is used in the filtering step to associate each transcript with its gene annotation
+
+```{r}
+library(tidyverse)
+
+june_tx2gene <- select(june_final, query, geneF)
+colnames(june_tx2gene) <- c('txID', 'geneID')
+
+utah_tx2gene <- select(utah_final, query, geneF)
+colnames(utah_tx2gene) <- c('txID', 'geneID')
+
+straw_tx2gene <- select(straw_final, query, geneF)
+colnames(straw_tx2gene) <- c('txID', 'geneID')
+
+path <- "./data/transcriptomes/fltr1/tx2gene/"
+
+write_tsv(june_tx2gene, paste0(path, "june_tx2gene.tsv"), col_names = T)
+write_tsv(utah_tx2gene, paste0(path, "utah_tx2gene.tsv"), col_names = T)
+write_tsv(straw_tx2gene, paste0(path, "straw_tx2gene.tsv"), col_names = T)
+```
+
+## Final Transcriptomes .fasta File
+
+Additional filtering is required in order to make the transcriptomes comparable among lineages at the transcript-level (i.e. each gene has the same number of transcripts represented for each lineage and each of these transcripts are similar between lineages).
+
+Use seqtk to pull all transcripts annotated as a gene from all lineages and combine into one fasta file
+
+```{bash}
+#!/bin/bash
+
+conda activate seqtk
+
+cd ~/github/sucker/differential_expression/data/transcriptomes/fltr2/multi_transcripts/
 
 > logs/seqtk1.log
 
@@ -256,16 +203,17 @@ printf "Extracting transcripts using seqtk for each gene\n" >> logs/seqtk1.log
 
 count=1
 
-cat ../../../predicted_genes/common_genes_test.txt | while read gene;
+cat ../../../predicted_genes/common_genes.txt | while read gene;
 do
   printf "Processing $gene $count\n" >> logs/seqtk1.log
   let count++
   > ${gene}.unfltr.fa
-  for file in ../tx2gene/*.tsv;
+  for file in ../../fltr1/tx2gene/*.tsv;
   do
+    pattern='\t'"${gene}"'$'
     samp=`basename ${file} _tx2gene.tsv`
-    grep -w $gene $file > gene.txt
-    seqtk subseq ../filtered_transcripts/${samp}_filtered_transcripts.fasta \
+    grep -P $pattern $file > gene.txt
+    seqtk subseq ../../fltr1/filtered_transcripts/${samp}_fltr1.fasta \
     gene.txt | sed -r 's/(>.+)(\s.+)/\1_'"${samp}"'_'"${gene}"'/g' >> ${gene}.unfltr.fa
     done
     rm gene.txt
@@ -307,6 +255,7 @@ Determine which clusters have all three lineages represented and all transcripts
 #!/bin/bash
 
 #conda create -n pandas pandas
+
 conda activate pandas
 
 > logs/pandas.log
@@ -329,28 +278,32 @@ Generate filtered fasta files based off parameters described above
 
 ```{bash}
 #!/bin/bash
+
+# Update code on Marylou
+
 conda activate seqtk
 
-> logs/seqtk2.log
+> logs/seqtk2_1.log
+> logs/seqtk2_2.log
 
-printf "Filtering fasta files using seqtk and renaming fasta file headers\n" >> logs/seqtk2.log
+printf "Filtering fasta files using seqtk and renaming fasta file headers\n" >> logs/seqtk2_1.log
 
 count=1
 
 for file in *.clstr.srtd;
 do
   gene=`basename ${file} .clstr.srtd`
-  printf "Processing $gene $count\n" >> logs/seqtk2.log
+  printf "Processing $gene $count\n" >> logs/seqtk2_1.log
   let count++
-  seqtk subseq ${gene}.unfltr.fa ${file} > ${gene}.unfltrd.fa
-  seqkit replace -p "^(\S+)" -r '{kv}' -k ${gene}.clstr.srtd ${gene}.unfltrd.fa > ${gene}.fltrd.fa 
-  awk '!/^>/ { printf "%s", $0; n = "\n" } /^>/ { print n $0; n = "" } END { printf "%s", n }' ${gene}.fltrd.fa > \
-  ${gene}.fltr.fa 
-  #rm ${gene}.fltrd.fa
-  #rm ${gene}.clstr.srtd
-  #rm ${gene}.unfltrd.fa
-  #rm ${gene}.unfltr.fa
-  #rm ${gene}.clstr
+  seqtk subseq ${gene}.unfltr.fa ${file} > ${gene}.fltrd1.fa
+  seqkit replace -p "^(\S+)" -r '{kv}' -k ${gene}.clstr.srtd ${gene}.fltrd1.fa > ${gene}.fltrd2.fa 2>> logs/seqtk2_2.log
+  awk '!/^>/ { printf "%s", $0; n = "\n" } /^>/ { print n $0; n = "" } END { printf "%s", n }' ${gene}.fltrd2.fa > \
+  ${gene}.fltrd.fa 
+  rm ${gene}.fltrd1.fa
+  rm ${gene}.fltrd2.fa
+  rm ${gene}.clstr.srtd
+  rm ${gene}.unfltr.fa
+  rm ${gene}.clstr
 done
 ```
 
@@ -359,7 +312,7 @@ Create final transcriptomes for all three lineages.
 ```{bash}
 #!/bin/bash
 
-> logs/transcriptomes.log
+> logs/lineage.log
 
 printf "Generating final transcriptomes\n" >> logs/transcriptomes.log
 
@@ -370,21 +323,26 @@ done
 
 count=1
 
-for file in *.fltr.fa
+for file in *.fltrd.fa
 do
-  gene=`basename ${file} .fltr.fa`
-  printf "Processing $gene $count\n" >> logs/transcriptomes.log
+  gene=`basename ${file} .fltrd.fa`
+  printf "Processing $gene $count\n" >> logs/lineage.log
   let count++
   for lineage in june utah straw;
   do
     grep $lineage $file > gene.txt
-    grep -w -f gene.txt -A 1 $file >> ../final_transcripts/${lineage}.fa
+    grep -w -f gene.txt -A 1 $file >> ../final_transcripts/${lineage}1.fa
     done
   rm gene.txt
-  #rm ${gene}.fltr.fa
+  rm ${gene}.fltrd.fa
 done
-```
 
+# confirm no transcripts are represented twice 
+
+cd ../final_transcripts/
+
+grep -o -P '>transcript/\d+' *.fa | uniq -d
+```
 
 # Quantify Transcript Abundance with Salmon
 
@@ -414,9 +372,9 @@ conda activate salmon
 
 cd ~/github/sucker/differential_expression/data/salmon/index/
 
-salmon index -t ~/github/sucker/differential_expression/data/transcriptomes/filtered/final_transcripts/june.fa -i june_index
-salmon index -t ~/github/sucker/differential_expression/data/transcriptomes/filtered/final_transcripts/utah.fa -i utah_index
-salmon index -t ~/github/sucker/differential_expression/data/transcriptomes/filtered/final_transcripts/straw.fa -i straw_index
+salmon index -t ~/github/sucker/differential_expression/data/transcriptomes/fltr2/final_transcripts/june.fa -i june_index
+salmon index -t ~/github/sucker/differential_expression/data/transcriptomes/fltr2/final_transcripts/utah.fa -i utah_index
+salmon index -t ~/github/sucker/differential_expression/data/transcriptomes/fltr2/final_transcripts/straw.fa -i straw_index
 ```
 
 ## Quantify Samples
@@ -504,13 +462,14 @@ This file associates transcripts with gene IDs so that we can quantify expressio
 ```{bash}
 #!/bin/bash
 
-cd ~/github/sucker/differential_expression/data/transcriptomes/filtered/final_transcripts
+cd ~/github/sucker/differential_expression/data/transcriptomes/fltr2/final_transcripts
 
 for file in *.fa;
 do
   lineage=`basename ${file} .fa`
-  grep ">" ${lineage}.fa | perl -pe 's/>(\w+\/\d+)_(\w+)_(.+)(_)(\d+)/$1\t$2\t$3\t$3$4$5/' \ 
-  > ../tx2gene/${lineage}_tx2gene.fltrd.tsv
+  echo $file
+  grep ">" ${lineage}.fa | perl -pe 's/>(\w+\/\d+)_(\w+)_(.+)(_)(\d+)/$1_$2_$3$4$5\t$1\t$2\t$3\t$3$4$5/'  > \
+  ../tx2gene/${lineage}_tx2gene.fltrd.tsv
 done
 
 ```
@@ -519,19 +478,36 @@ done
 ```{r}
 library(tidyverse)
 
-path <- "./data/transcriptomes/filtered/tx2gene/"
+path <- "./data/transcriptomes/fltr2/tx2gene/"
 
 june_tx2gn <- read_delim(paste0(path, "june_tx2gene.fltrd.tsv"), col_names = FALSE)
 utah_tx2gn <- read_delim(paste0(path, "utah_tx2gene.fltrd.tsv"), col_names = FALSE)
 straw_tx2gn <- read_delim(paste0(path, "straw_tx2gene.fltrd.tsv"), col_names = FALSE)
 
-colnames(june_tx2gn) <- c("txID", "species", "geneID", "txForm")
-colnames(utah_tx2gn) <- c("txID", "species", "geneID", "txForm")
-colnames(straw_tx2gn) <- c("txID", "species", "geneID", "txForm")
+colnames(june_tx2gn) <- c("txID", "tx", "species", "geneID", "txForm")
+colnames(utah_tx2gn) <- c("txID", "tx", "species", "geneID", "txForm")
+colnames(straw_tx2gn) <- c("txID", "tx", "species", "geneID", "txForm")
 
-june_tx2gene1 <- select(june_tx2gn, txID, geneID)
-utah_tx2gene1 <- select(utah_tx2gn, txID, geneID)
-straw_tx2gene1 <- select(straw_tx2gn, txID, geneID)
+# Check for duplicate transcripts
+dup1 <- june_tx2gn$tx[duplicated(june_tx2gn$tx)] 
+dup2 <- utah_tx2gn$tx[duplicated(utah_tx2gn$tx)] 
+dup3 <- straw_tx2gn$tx[duplicated(straw_tx2gn$tx)] 
+
+june_tx2gene <- select(june_tx2gn, txID, geneID)
+utah_tx2gene <- select(utah_tx2gn, txID, geneID)
+straw_tx2gene <- select(straw_tx2gn, txID, geneID)
+
+# Determine total # of genes vs. total # of transcripts
+
+df.list <- list(june_tx2gene, utah_tx2gene, straw_tx2gene)
+
+for (df in df.list) {
+  len1 <- length(unique(df$geneID))
+  len2 <- length(unique(df$txID))
+  print(paste("genes:", len1, sep = " "))
+  print(paste("transcripts:", len2, sep = " "))
+}
+
 ```
 
 ## Transcript abundance files and tximport
@@ -592,9 +568,9 @@ utah_txi <- tximport(utah_files, type = "salmon", tx2gene = utah_tx2gene)
 straw_txi <- tximport(straw_files, type = "salmon", tx2gene = straw_tx2gene)
 
 # Confirm number of rows is the same between different objects
-nrow(june_txi$counts) == 10006
-nrow(utah_txi$counts) == 10006
-nrow(straw_txi$counts) == 10006
+nrow(june_txi$counts) == 7195
+nrow(utah_txi$counts) == 7195
+nrow(straw_txi$counts) == 7195
 ```
 
 ## Construct a DESeqDataSet
@@ -802,7 +778,6 @@ all_14v12 <- list(June = june_14v12, Utah = utah_14v12, Strawberry = straw_14v12
 
 library(ggplot2)
 library(ggVennDiagram)
-#library(ggpubr)
 library(gridExtra)
 
 getVenn <- function(list) {
@@ -836,3 +811,526 @@ myPlot <- grid.arrange(venn_12v9, venn_14v9, venn_14v12, ncol = 1)
 ggsave("./figures/venn_diagram/venn_diagrams.pdf", myPlot)
 
 ```
+
+# Candidate Gene Identification
+
+## Geneontology.org
+
+Generate a comprehensive list of candidate genes using Geneontology.org.
+
+Navigate to Geneontology.org > Input search terms and search > Select "Annotations" > Select "Custom Download" > Select the following columns of interest: Gene/product (bioentity_label), Gene/product_name (bioentity_name), GO_class (direct) (annotation_class), Contributor (assigned_by), Organism (taxon_label), Evidence (evidence_type), Evidence_with (evidence_with), Reference (reference) and Date (date) > Download and save as .tsv > Input Column names: "Gene	Gene_name	GO_class	Contributor	Organism	Evidence	Evidence_with	Reference	Date."  
+
+### Generate Vectors of Candidate Genes
+
+```{r}
+
+# Generate vector of all genes
+
+all_genes <- row.names(june_dds)
+
+# Generate tables of candidate genes from Geneontology.org
+
+# development+face (414)
+
+GO_annot_path1 <- "./data/go_annotations/development+face.tsv"
+
+GO_annot1 <- read_tsv(GO_annot_path1)
+
+# development+craniofacial (645)
+
+GO_annot_path2 <- "./data/go_annotations/development+craniofacial.tsv"
+
+GO_annot2 <- read_tsv(GO_annot_path2)
+
+# Extract unique genes (case insensitive)
+
+GO_genes <- tolower(GO_annot_combined$Gene) %>% unique()
+
+search <- GO_genes %in% all_genes
+
+sum(search)
+
+# Generate vector of all candidate genes 
+
+final_genes <- tibble(GO_genes, search) %>%
+  filter(search == TRUE) %>%
+  pull(GO_genes) %>%
+  as.vector()
+```
+
+### Generate Tables of Candidate Genes and Expression Levels
+
+These 43 candidate genes were then analyzed between the contrasts of 12v9, 14v12 and 14v9 to determine if the gene was upregulated (1), downregulated (-1), unchanged (0) or undetermined (padj = NA). Genes were then removed if their padj equaled NA or if they were in the "0 0 0 0 0 0" category because this indicated the genes were unchanged across all contrasts. This left me with 27 final candidate genes.
+
+```{r}
+
+library(nbHelpers)
+
+# Functions
+
+# Create Column of Expression Levels (i.e., upregulated (1), downregulated (-1), unchanged (0)) & NA, and then Subset Dataframe
+
+candidate_genes <- function(result, final_gene, alpha, lfcThreshold, combo) {
+  result <- deseqRes2Tibble(result) %>%
+  filter(gene %in% final_gene) %>% 
+  mutate(expression = case_when(!is.na(padj) & padj < alpha & log2FoldChange > lfcThreshold ~ 1,
+                                !is.na(padj) & padj < alpha & log2FoldChange < -lfcThreshold ~ -1,
+                                padj >= alpha ~ 0,
+                                padj == NA ~ as.numeric(NA)))
+  result <- as.tibble(result[,c(7,8)])
+  colnames(result)[2] <- combo
+  return(result)
+}
+
+# Run candidate genes function
+
+# 12v9
+
+june_candidate_12v9 <- candidate_genes(june_res_12v9, final_genes, alpha, lfcThreshold, "J_12v9")
+utah_candidate_12v9 <- candidate_genes(utah_res_12v9, final_genes, alpha, lfcThreshold, "U_12v9")
+straw_candidate_12v9 <- candidate_genes(straw_res_12v9, final_genes, alpha, lfcThreshold, "S_12v9")
+
+#14v12
+
+june_candidate_14v12 <- candidate_genes(june_res_14v12, final_genes, alpha, lfcThreshold, "J_14v12")
+utah_candidate_14v12 <- candidate_genes(utah_res_14v12, final_genes, alpha, lfcThreshold, "U_14v12")
+straw_candidate_14v12 <- candidate_genes(straw_res_14v12, final_genes, alpha, lfcThreshold, "S_14v12")
+
+# 14v9
+
+june_candidate_14v9 <- candidate_genes(june_res_14v9, final_genes, alpha, lfcThreshold, "J_14v9")
+utah_candidate_14v9 <- candidate_genes(utah_res_14v9, final_genes, alpha, lfcThreshold, "U_14v9")
+straw_candidate_14v9 <- candidate_genes(straw_res_14v9, final_genes, alpha, lfcThreshold, "S_14v9")
+
+# Join Dataframes
+
+# 12v9
+
+candidate_expression_combined_12v9 <- full_join(full_join(june_candidate_12v9, utah_candidate_12v9, by = "gene"), straw_candidate_12v9, by = "gene")
+
+# 14v12
+
+candidate_expression_combined_14v12 <- full_join(full_join(june_candidate_14v12, utah_candidate_14v12, by = "gene"), straw_candidate_14v12, by = "gene")
+
+# 14v9
+
+candidate_expression_combined_14v9 <- full_join(full_join(june_candidate_14v9, utah_candidate_14v9, by = "gene"), straw_candidate_14v9, by = "gene")
+
+# Combine 12v9, 14v9, & 14v12 data frames together
+
+candidate_expression_combined <- full_join(candidate_expression_combined_14v9,
+                                           full_join(candidate_expression_combined_12v9,
+                                                     candidate_expression_combined_14v12,
+                                                     by = "gene"), by = "gene")
+
+# Remove any genes that have an NA for their padj from all time combinations (12v9, 14v12, 14v9).
+
+candidate_expression_combined <- drop_na(candidate_expression_combined)
+
+# Generate combo column with expression combinations of each gene (i.e., 0 0 0 0 0 1 = Upregulated in straw in 14v12, unchanged for all other species and times). Currently, only includes 12v9 & 14v12. Code below can easily be modified to include 14v9 information and extend the combination. However, for now I'm just basing my combinations off of 12v9 and 14v12. This makes the interpretation much simpler!
+
+candidate_expression_combined$combo <- paste(candidate_expression_combined$J_12v9, 
+                                        candidate_expression_combined$U_12v9,
+                                        candidate_expression_combined$S_12v9,
+                                        candidate_expression_combined$J_14v12,
+                                        candidate_expression_combined$U_14v12,
+                                        candidate_expression_combined$S_14v12)
+
+# Generate counts of expression combinations to explore clustering of genes 
+
+candidate_expression_counts <- dplyr::count(candidate_expression_combined, combo)
+
+# Pull genes from specific expression combinations of interest
+
+check <- filter(candidate_expression_combined, combo == "0 1 0 0 -1 0") %>% select(gene) %>% pull(gene)
+
+# Look at p-value for specific gene. This can be useful to confirm that other functions are working appropriately. 
+
+genePvalue <- deseqRes2Tibble(straw_res_14v12) %>% filter(gene == "SKI")
+```
+
+# Candidate Gene Plots
+
+## Plot Counts (Gene-level)
+
+Generated normalized counts using plotCounts and then generated my own plot using ggplot2 with the data frame plotCounts returned. 
+
+The biggest issue with this plot (single and multiple gene plots) is that the scaling can be off. I will have to manually fix this if I use these plots. 
+
+```{r}
+library("ggprism")
+library("scales")
+
+# Functions
+
+# Determine significance of gene for one species at one time point and store in table
+
+pValue <- function(res, gene) {
+
+  # Filter out data for gene of interest  
+  
+  p <- as.data.frame(res) %>% rownames_to_column(var = "Gene") %>% filter(Gene == gene)
+  
+  # Select columns of interest 
+  
+  p <- p[,c(1,7)]
+  
+  # Generate new column of significance (i.e. NA, "" = ns, *, **, ***, ****)
+  
+  p <- mutate(p, signif = case_when(padj >= .05 ~ "", 
+                                    padj == NA ~ as.character(NA),
+                                    padj < .05 & padj >= .01 ~ "*", 
+                                    padj < .01 & padj >= .001 ~ "**",
+                                    padj < .001 & padj >= .0001 ~ "***",
+                                    padj < .0001 ~ "****",))
+  
+  # Extract time information from name of data frame and store as string
+  
+  str1 <- deparse(substitute(res))
+  str1 <- gsub('.+_.+_(.+)','\\1',str1)
+  time <- c(str1)
+  
+  # Extract species information from name of data frame and store as string
+  
+  str2 <- deparse(substitute(res))
+  str2 <- gsub('(.+)_.+_.+','\\1',str2)
+  species <- c(str2)
+
+  # Add time and species columns
+
+  p <- add_column(p, time, species)
+
+  return(p)
+
+}
+
+# Combine significance data frames 
+
+pValue_Combo <- function(june_res_12v9, utah_res_12v9, straw_res_12v9, 
+                         june_res_14v12, utah_res_14v12, straw_res_14v12, 
+                         june_res_14v9, utah_res_14v9, straw_res_14v9, gene) {
+  
+  # Determine significance of gene for one species at one time point and store in table
+  
+  p1 <- pValue(june_res_12v9, gene)
+  p2 <- pValue(utah_res_12v9, gene)
+  p3 <- pValue(straw_res_12v9, gene)
+  p4 <- pValue(june_res_14v12, gene)
+  p5 <- pValue(utah_res_14v12, gene)
+  p6 <- pValue(straw_res_14v12, gene)
+  p7 <- pValue(june_res_14v9, gene)
+  p8 <- pValue(utah_res_14v9, gene)
+  p9 <- pValue(straw_res_14v9, gene)
+
+  # Generate Time1, Time2 columns for brackets in ggplot code below
+  
+  p_combo <- rbind(p1, p2, p3, p4, p5, p6, p7, p8, p9) %>% as_tibble() %>% 
+    mutate(Time1 = case_when(time == "12v9" ~ 1, 
+                             time == "14v9" ~ 1, 
+                             time == "14v12" ~ 2)) %>%
+    mutate(Time2 = case_when(time == "12v9" ~ 2, 
+                             time == "14v9" ~ 3, 
+                             time == "14v12" ~ 3)) 
+  
+  return(p_combo)
+}
+
+# Generate plot of gene counts for gene of interest
+
+gene_counts <- function(j_dds, u_dds, s_dds, gene_name, significance) {
+ 
+  # Dataframe of plot counts for points
+  
+  j_gene <- plotCounts(j_dds, gene = gene_name, intgroup = c("Time"), returnData = TRUE)
+  j_gene <- data.frame(j_gene, species = c("June"))
+  
+  u_gene <- plotCounts(u_dds, gene = gene_name, intgroup = c("Time"), returnData = TRUE)
+  u_gene <- data.frame(u_gene, species = c("Utah"))
+  
+  s_gene <- plotCounts(s_dds, gene = gene_name, intgroup = c("Time"), returnData = TRUE)
+  s_gene <- data.frame(s_gene, species = c("Strawberry"))
+  
+  # Data frame of average counts for line
+  
+  j_average <- as_tibble(j_gene) %>% group_by(Time) %>% summarise(average = mean(count)) 
+  j_average <- data.frame(j_average, species = c("June"))
+
+  u_average <- as_tibble(u_gene) %>% group_by(Time) %>% summarise(average = mean(count)) 
+  u_average <- data.frame(u_average, species = c("Utah"))
+
+  s_average <- as_tibble(s_gene) %>% group_by(Time) %>% summarise(average = mean(count))
+  s_average <- data.frame(s_average, species = c("Strawberry"))
+
+  # Data frame of significance for each species
+  
+  significance <- mutate(significance, species = case_when(species == "june" ~ "June",
+                                                           species == "utah" ~ "Utah",
+                                                           species == "straw" ~ "Strawberry"))
+
+  j_significance <- filter(significance, species == "June")
+  u_significance <- filter(significance, species == "Utah")
+  s_significance <- filter(significance, species == "Strawberry")
+  
+  # Merge plot counts data frames together
+  
+  counts <- rbind(j_gene, u_gene, s_gene)
+  
+  # Refactor species column so order is displayed correctly in legend
+  
+  counts$species <- factor(counts$species, levels = c("June", "Utah", "Strawberry"))
+  
+  # Merge average counts data frames together
+  
+  average <- rbind(j_average, u_average, s_average)
+  average <- dplyr::rename(average, time = Time)
+  
+  # Refactor species column so order is displayed correctly in legend
+  
+  average$species <- factor(average$species, levels = c("June", "Utah", "Strawberry"))
+  
+  # Generate plot of counts
+  
+  ggplot(counts, aes(x = Time, y = count, color = species)) + 
+    geom_point(position = position_jitter(w = 0.1, h = 0)) +
+    geom_line(average, mapping = aes(x = time, y = average, group = species)) +
+    scale_y_log10(limits = c(NA, 6*max(counts$count))) +
+    scale_colour_discrete("Species") +
+    theme_bw() +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+          plot.title = element_text(hjust = 0.5, size = 9), axis.title.x = element_blank(),
+          axis.title.y = element_blank()) +
+    ggtitle(gene_name) +
+    add_pvalue(j_significance, label = "signif", xmin = "Time2", xmax = "Time1", 
+               y.position = log10(1.5*max(counts$count)), tip.length = .01, step.increase = 0.06,
+               label.size = 4, bracket.color = "black") +
+    add_pvalue(u_significance, label = "signif", xmin = "Time2", xmax = "Time1", 
+               y.position = log10(1.55*max(counts$count)), tip.length = .01, step.increase = 0.06,
+               label.size = 4, bracket.color = "transparent") +
+    add_pvalue(s_significance, label = "signif", xmin = "Time2", xmax = "Time1", 
+               y.position = log10(1.65*max(counts$count)), tip.length = .01, step.increase = 0.06,
+               label.size = 4, bracket.color = "transparent") 
+}
+
+# Some of the plots display in scientific notation. This will set a higher penality for deciding to use scientific notation
+options(scipen=10000)
+```
+
+### Multiple Genes
+
+#### Plots of genes by Combo of Interest
+
+```{r}
+library(ggpubr)
+library(grid)
+library(gridExtra)
+
+# Functions
+
+# Generates multiple plots for combination of interest
+
+multiGene_plot <- function(interest, str1) {
+  
+  gene_list <- list()
+    
+  # Generate list of plots from expression combination of interest 
+
+  for (i in interest) {
+    pValue_Final <- pValue_Combo(june_res_12v9, utah_res_12v9, straw_res_12v9,
+                           june_res_14v12, utah_res_14v12, straw_res_14v12,
+                           june_res_14v9, utah_res_14v9, straw_res_14v9, i)
+
+    # Make sure genes that equal NA are not plotted
+    
+    if (!any(is.na(pValue_Final$signif))) {
+      gene_plot <- gene_counts(june_dds, utah_dds, straw_dds, i, pValue_Final)
+      gene_list[[i]] <- gene_plot
+    }
+  }
+  
+  # Arrange plots into groups of 8 per page and store in a list
+  
+  # If length of genelist is <= 8 & != 0, tempfiglist must be stored in figlist (i.e. nested list) for marrange to work
+  
+  if (length(gene_list) <= 8 & length(gene_list) != 0) {
+    tempfiglist <- ggarrange(plotlist = gene_list, ncol=4, nrow=2, 
+                             common.legend = TRUE, legend="bottom") 
+    figlist <- list(tempfiglist)
+    final_pdf <- marrangeGrob(figlist, nrow = 1, ncol = 1, top = str1, left = "Counts", bottom = "Time")
+    pdf_name <- paste("./figures/counts/", str1, ".pdf", sep ="")
+    pdf_name <- gsub(" ", "", pdf_name)   
+    ggsave(file = pdf_name, final_pdf)
+    
+  } else if (length(gene_list) != 0) {
+    figlist <- ggarrange(plotlist = gene_list, ncol=4, nrow=2, common.legend = TRUE, legend="bottom") 
+    final_pdf <- marrangeGrob(figlist, nrow = 1, ncol = 1, top = str1, left = "Counts", bottom = "Time")
+    pdf_name <- paste("./figures/counts/", str1, ".pdf", sep ="")
+    pdf_name <- gsub(" ", "", pdf_name)   
+    ggsave(file = pdf_name, final_pdf)
+    
+  }
+  
+}
+```
+
+```{r}
+# Determine expression combinations of interest from all candidate genes
+  
+combination <- dplyr::count(candidate_expression_counts, combo) %>% pull(combo)
+
+#combination <- combination[combination != "0 0 0 0 0 0"]
+
+# It can really speed up the time it takes to execute the code below if the combination where all genes are unchanged is removed. You can use the following code to do so: combination <- combination[combination != "0 0 0 0 0 0"]
+
+# Loop through all specific expression combinations of interest and generate PDFs of plots
+
+for (i in combination) {
+  
+  plotCombo <- filter(candidate_expression_combined, combo == i) %>% select(gene) %>% pull(gene)
+  
+  multiGene_plot(plotCombo, i)
+  
+  }
+```
+
+#### Plots of all 28 genes
+
+```{r}
+library(tidyverse)
+library(DESeq2)
+library(ggpubr)
+library(grid)
+library(gridExtra)
+library("ggprism")
+library("scales")
+
+# The functions below have been modified from functions above so that all 28 plots would fit onto 3 pages and that none of the brackets and asterisks were lost
+
+gene_counts <- function(j_dds, u_dds, s_dds, gene_name, significance) {
+ 
+  # Dataframe of plot counts for points
+  
+  j_gene <- plotCounts(j_dds, gene = gene_name, intgroup = c("Time"), returnData = TRUE)
+  j_gene <- data.frame(j_gene, species = c("June"))
+  
+  u_gene <- plotCounts(u_dds, gene = gene_name, intgroup = c("Time"), returnData = TRUE)
+  u_gene <- data.frame(u_gene, species = c("Utah"))
+  
+  s_gene <- plotCounts(s_dds, gene = gene_name, intgroup = c("Time"), returnData = TRUE)
+  s_gene <- data.frame(s_gene, species = c("Strawberry"))
+  
+  # Data frame of average counts for line
+  
+  j_average <- as_tibble(j_gene) %>% group_by(Time) %>% summarise(average = mean(count)) 
+  j_average <- data.frame(j_average, species = c("June"))
+
+  u_average <- as_tibble(u_gene) %>% group_by(Time) %>% summarise(average = mean(count)) 
+  u_average <- data.frame(u_average, species = c("Utah"))
+
+  s_average <- as_tibble(s_gene) %>% group_by(Time) %>% summarise(average = mean(count))
+  s_average <- data.frame(s_average, species = c("Strawberry"))
+
+  # Data frame of significance for each species
+  
+  significance <- mutate(significance, species = case_when(species == "june" ~ "June",
+                                                           species == "utah" ~ "Utah",
+                                                           species == "straw" ~ "Strawberry"))
+
+  j_significance <- filter(significance, species == "June")
+  u_significance <- filter(significance, species == "Utah")
+  s_significance <- filter(significance, species == "Strawberry")
+  
+  # Merge plot counts data frames together
+  
+  counts <- rbind(j_gene, u_gene, s_gene)
+  
+  # Refactor species column so order is displayed correctly in legend
+  
+  counts$species <- factor(counts$species, levels = c("June", "Utah", "Strawberry"))
+  
+  # Merge average counts data frames together
+  
+  average <- rbind(j_average, u_average, s_average)
+  average <- dplyr::rename(average, time = Time)
+  
+  # Refactor species column so order is displayed correctly in legend
+  
+  average$species <- factor(average$species, levels = c("June", "Utah", "Strawberry"))
+  
+  # Generate plot of counts
+  
+  ggplot(counts, aes(x = Time, y = count, color = species)) + 
+    geom_point(position = position_jitter(w = 0.1, h = 0)) +
+    geom_line(average, mapping = aes(x = time, y = average, group = species)) +
+    scale_y_log10(limits = c(NA, 7*max(counts$count))) +
+    scale_colour_discrete("Species") +
+    theme_bw() +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+          plot.title = element_text(hjust = 0.5, size = 6), axis.title.x = element_blank(),
+          axis.title.y = element_blank(), axis.text.x = element_text(size = 5),
+          axis.text.y = element_text(size = 5)) +
+    ggtitle(gene_name) +
+    add_pvalue(j_significance, label = "signif", xmin = "Time2", xmax = "Time1", 
+               y.position = log10(1.5*max(counts$count)), tip.length = .01, step.increase = 0.06,
+               label.size = 4, bracket.color = "black") +
+    add_pvalue(u_significance, label = "signif", xmin = "Time2", xmax = "Time1", 
+               y.position = log10(1.55*max(counts$count)), tip.length = .01, step.increase = 0.06,
+               label.size = 4, bracket.color = "transparent") +
+    add_pvalue(s_significance, label = "signif", xmin = "Time2", xmax = "Time1", 
+               y.position = log10(1.65*max(counts$count)), tip.length = .01, step.increase = 0.06,
+               label.size = 4, bracket.color = "transparent") 
+}
+
+# Some of the plots display in scientific notation. This will set a higher penality for deciding to use scientific notation
+options(scipen=10000)
+
+multiGene_plot <- function(interest, str1) {
+  
+  gene_list <- list()
+    
+  # Generate list of plots from expression combination of interest 
+
+  for (i in interest) {
+    pValue_Final <- pValue_Combo(june_res_12v9, utah_res_12v9, straw_res_12v9,
+                           june_res_14v12, utah_res_14v12, straw_res_14v12,
+                           june_res_14v9, utah_res_14v9, straw_res_14v9, i)
+
+    # Make sure genes that equal NA are not plotted
+    
+    if (!any(is.na(pValue_Final$signif))) {
+      gene_plot <- gene_counts(june_dds, utah_dds, straw_dds, i, pValue_Final)
+      gene_list[[i]] <- gene_plot
+    }
+  }
+  
+  # Arrange plots into groups of 8 per page and store in a list
+  
+  # If length of genelist is <= 8 & != 0, tempfiglist must be stored in figlist (i.e. nested list) for marrange to work
+  
+  if (length(gene_list) <= 8 & length(gene_list) != 0) {
+    tempfiglist <- ggarrange(plotlist = gene_list, ncol=5, nrow=2, 
+                             common.legend = TRUE, legend="bottom") 
+    figlist <- list(tempfiglist)
+    final_pdf <- marrangeGrob(figlist, nrow = 1, ncol = 1, left = "Counts", bottom = "Time", top = NULL)
+    pdf_name <- paste("./figures/counts/", str1, ".pdf", sep ="")
+    pdf_name <- gsub(" ", "", pdf_name)   
+    ggsave(file = pdf_name, final_pdf)
+    
+  } else if (length(gene_list) != 0) {
+    figlist <- ggarrange(plotlist = gene_list, ncol=4, nrow=7, common.legend = TRUE, legend="bottom") 
+    #final_pdf <- marrangeGrob(figlist, nrow = 1, ncol = 1, left = "Counts", bottom = "Time", top = NULL)
+    pdf_name <- paste("./figures/counts/", str1, ".pdf", sep ="")
+    pdf_name <- gsub(" ", "", pdf_name)   
+    ggsave(file = pdf_name, figlist, width = 8.5, height = 11, units = "in")
+    
+  }
+  
+}
+
+plotCombo <- filter(candidate_expression_combined, combo != "0 0 0 0 0 0") %>%
+  select(gene) %>% pull(gene)
+
+multiGene_plot(plotCombo, "All")
+
+```
+
+
