@@ -567,6 +567,22 @@ june_txi <- tximport(june_files, type = "salmon", tx2gene = june_tx2gene)
 utah_txi <- tximport(utah_files, type = "salmon", tx2gene = utah_tx2gene)
 straw_txi <- tximport(straw_files, type = "salmon", tx2gene = straw_tx2gene)
 
+#june_txi <- tximport(june_files, type = "salmon", txOut = TRUE)
+#utah_txi <- tximport(utah_files, type = "salmon", txOut = TRUE)
+#straw_txi <- tximport(straw_files, type = "salmon", txOut = TRUE)
+
+#row.names(june_txi$abundance) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(june_txi$abundance), perl = TRUE)
+#row.names(june_txi$counts) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(june_txi$counts), perl = TRUE)
+#row.names(june_txi$length) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(june_txi$length), perl = TRUE)
+
+#row.names(utah_txi$abundance) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(utah_txi$abundance), perl = TRUE)
+#row.names(utah_txi$counts) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(utah_txi$counts), perl = TRUE)
+#row.names(utah_txi$length) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(utah_txi$length), perl = TRUE)
+
+#row.names(straw_txi$abundance) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(straw_txi$abundance), perl = TRUE)
+#row.names(straw_txi$counts) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(straw_txi$counts), perl = TRUE)
+#row.names(straw_txi$length) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(straw_txi$length), perl = TRUE)
+
 # Confirm number of rows is the same between different objects
 nrow(june_txi$counts) == 7195
 nrow(utah_txi$counts) == 7195
@@ -848,7 +864,12 @@ GO_genes <- tolower(GO_annot_combined$Gene) %>% unique()
 
 search <- GO_genes %in% all_genes
 
-sum(search)
+#final_genes <- character()
+
+#for (gene in GO_genes) {
+#  pattern <- paste0("^", gene, "_")
+#  final_genes <- append(grep(pattern, all_genes, value = TRUE), geneV)
+#}
 
 # Generate vector of all candidate genes 
 
@@ -1307,7 +1328,7 @@ multiGene_plot <- function(interest, str1) {
   # If length of genelist is <= 8 & != 0, tempfiglist must be stored in figlist (i.e. nested list) for marrange to work
   
   if (length(gene_list) <= 8 & length(gene_list) != 0) {
-    tempfiglist <- ggarrange(plotlist = gene_list, ncol=5, nrow=2, 
+    tempfiglist <- ggarrange(plotlist = gene_list, ncol=3, nrow=3, 
                              common.legend = TRUE, legend="bottom") 
     figlist <- list(tempfiglist)
     final_pdf <- marrangeGrob(figlist, nrow = 1, ncol = 1, left = "Counts", bottom = "Time", top = NULL)
@@ -1316,11 +1337,11 @@ multiGene_plot <- function(interest, str1) {
     ggsave(file = pdf_name, final_pdf)
     
   } else if (length(gene_list) != 0) {
-    figlist <- ggarrange(plotlist = gene_list, ncol=4, nrow=7, common.legend = TRUE, legend="bottom") 
-    #final_pdf <- marrangeGrob(figlist, nrow = 1, ncol = 1, left = "Counts", bottom = "Time", top = NULL)
+    figlist <- ggarrange(plotlist = gene_list, ncol=3, nrow=3, common.legend = TRUE, legend="bottom") 
+    final_pdf <- marrangeGrob(figlist, nrow = 1, ncol = 1, left = "Counts", bottom = "Time", top = NULL)
     pdf_name <- paste("./figures/counts/", str1, ".pdf", sep ="")
     pdf_name <- gsub(" ", "", pdf_name)   
-    ggsave(file = pdf_name, figlist, width = 8.5, height = 11, units = "in")
+    ggsave(file = pdf_name, final_pdf, width = 8.5, height = 11, units = "in") # figlist,
     
   }
   
