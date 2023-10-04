@@ -1157,8 +1157,6 @@ multiGene_plot <- function(interest, str1) {
     }
   }
   
-  # If go back to all 50 on one page, make list into a nested list so mmarrange will work
-  
     figlist <- ggarrange(plotlist = gene_list, ncol=5, nrow=5, common.legend = TRUE, legend="bottom") 
     final_pdf <- marrangeGrob(figlist, nrow = 1, ncol = 1, left = "Counts", bottom = "Time", top = NULL)
     pdf_name <- paste("./figures/counts/", str1, ".pdf", sep ="")
@@ -1171,6 +1169,8 @@ multiGene_plot <- function(interest, str1) {
 
 plotCombo <- filter(candidate_expression_combined, combo != "0 0 0 0 0 0") %>%
   select(gene) %>% pull(gene)
+
+# Plot all differentially expressed transcripts
 
 multiGene_plot(plotCombo, "all_transcripts")
 
