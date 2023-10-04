@@ -221,7 +221,7 @@ done
 
 ```
 
-Cluster transcripts using cd-hit-est
+Cluster transcripts associated with each gene using cd-hit-est
 
 ```{bash}
 #!/bin/bash
@@ -278,8 +278,6 @@ Generate filtered fasta files based off parameters described above
 
 ```{bash}
 #!/bin/bash
-
-# Update code on Marylou
 
 conda activate seqtk
 
@@ -455,9 +453,9 @@ done
 
 # Generate DESeqDataSet
 
-## Generate second transcript to gene mapping file
+## Generate second transript to gene mapping file
 
-This file associates transcripts with gene IDs so that we can quantify expression at the gene-level. 
+This file is only used in the tximport step if analyses are run at gene instead of transcript-level
 
 ```{bash}
 #!/bin/bash
@@ -474,6 +472,7 @@ done
 
 ```
 
+## Generate count matrices at the transcript-level
 
 ```{r}
 library(tidyverse)
@@ -508,11 +507,13 @@ for (df in df.list) {
   print(paste("transcripts:", len2, sep = " "))
 }
 
+# Determine number of transcripts per gene
+
+maxTx <- gsub('transcript/[0-9]+_[a-z]+_[a-zA-Z0-9.-]+_', '', df$txID, perl = TRUE) %>%
+  as.numeric() %>% as_tibble() %>% group_by(value) %>% summarise(n = n())
+
+print(maxTx)
 ```
-
-## Transcript abundance files and tximport
-
-Import transcript quantification data using tximport and create gene-level count tables 
 
 ```{r}
 library(readr)
@@ -562,31 +563,29 @@ names(straw_files) <- straw_names
 print("Straw Files")
 all(file.exists(straw_files))
 
-# Import quantification data for DESeq2 using tximport
-june_txi <- tximport(june_files, type = "salmon", tx2gene = june_tx2gene)
-utah_txi <- tximport(utah_files, type = "salmon", tx2gene = utah_tx2gene)
-straw_txi <- tximport(straw_files, type = "salmon", tx2gene = straw_tx2gene)
+# Read in files and generate transcript-level count matrices
 
-#june_txi <- tximport(june_files, type = "salmon", txOut = TRUE)
-#utah_txi <- tximport(utah_files, type = "salmon", txOut = TRUE)
-#straw_txi <- tximport(straw_files, type = "salmon", txOut = TRUE)
+june_txi <- tximport(june_files, type = "salmon", txOut = TRUE)
+utah_txi <- tximport(utah_files, type = "salmon", txOut = TRUE)
+straw_txi <- tximport(straw_files, type = "salmon", txOut = TRUE)
 
-#row.names(june_txi$abundance) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(june_txi$abundance), perl = TRUE)
-#row.names(june_txi$counts) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(june_txi$counts), perl = TRUE)
-#row.names(june_txi$length) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(june_txi$length), perl = TRUE)
+row.names(june_txi$abundance) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(june_txi$abundance), perl = TRUE)
+row.names(june_txi$counts) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(june_txi$counts), perl = TRUE)
+row.names(june_txi$length) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(june_txi$length), perl = TRUE)
 
-#row.names(utah_txi$abundance) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(utah_txi$abundance), perl = TRUE)
-#row.names(utah_txi$counts) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(utah_txi$counts), perl = TRUE)
-#row.names(utah_txi$length) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(utah_txi$length), perl = TRUE)
+row.names(utah_txi$abundance) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(utah_txi$abundance), perl = TRUE)
+row.names(utah_txi$counts) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(utah_txi$counts), perl = TRUE)
+row.names(utah_txi$length) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(utah_txi$length), perl = TRUE)
 
-#row.names(straw_txi$abundance) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(straw_txi$abundance), perl = TRUE)
-#row.names(straw_txi$counts) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(straw_txi$counts), perl = TRUE)
-#row.names(straw_txi$length) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(straw_txi$length), perl = TRUE)
+row.names(straw_txi$abundance) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(straw_txi$abundance), perl = TRUE)
+row.names(straw_txi$counts) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(straw_txi$counts), perl = TRUE)
+row.names(straw_txi$length) <- gsub('transcript/[0-9]+_[a-z]+_', '', row.names(straw_txi$length), perl = TRUE)
 
 # Confirm number of rows is the same between different objects
-nrow(june_txi$counts) == 7195
-nrow(utah_txi$counts) == 7195
-nrow(straw_txi$counts) == 7195
+
+nrow(june_txi$counts) == 10426
+nrow(utah_txi$counts) == 10426
+nrow(straw_txi$counts) == 10426
 ```
 
 ## Construct a DESeqDataSet
@@ -594,7 +593,7 @@ nrow(straw_txi$counts) == 7195
 ```{r}
 library(DESeq2)
 
-# Set Time as factor
+# Set time as factor
 june_samples$Time <- factor(june_samples$Time)
 utah_samples$Time <- factor(utah_samples$Time)
 straw_samples$Time <- factor(straw_samples$Time)
@@ -758,12 +757,12 @@ sum(straw_res_14v12$padj < alpha & abs(straw_res_14v12$log2FoldChange) > lfcThre
 
 # Venn Diagrams
 
-Generate Venn Diagrams to visualize gene expression between contrasts of interest
+Generate Venn Diagrams to visualize transcript expression between contrasts of interest
 
-## Generate List of DE Genes
+## Generate List of differentially expressed transcripts
 
 ```{r}
-# Gene list for contrast between weeks 12 and 9 (Week 9 is reference)
+# Transcript list for contrast between weeks 12 and 9 (Week 9 is reference)
 
 june_12v9 <- june_res_12v9[which(!is.na(june_res_12v9$padj) & june_res_12v9$padj < alpha & abs(june_res_12v9$log2FoldChange) > lfcThreshold),]@rownames
 utah_12v9 <- utah_res_12v9[which(!is.na(utah_res_12v9$padj) & utah_res_12v9$padj < alpha & abs(utah_res_12v9$log2FoldChange) > lfcThreshold),]@rownames
@@ -771,7 +770,7 @@ straw_12v9 <- straw_res_12v9[which(!is.na(straw_res_12v9$padj) & straw_res_12v9$
 
 all_12v9 <- list(June = june_12v9, Utah = utah_12v9, Strawberry = straw_12v9)
 
-# Gene list for contrast between weeks 14 and 9 (Week 9 is reference)
+# Transcript list for contrast between weeks 14 and 9 (Week 9 is reference)
 
 june_14v9 <- june_res_14v9[which(!is.na(june_res_14v9$padj) & june_res_14v9$padj < alpha & abs(june_res_14v9$log2FoldChange) > lfcThreshold),]@rownames
 utah_14v9 <- utah_res_14v9[which(!is.na(utah_res_14v9$padj) & utah_res_14v9$padj < alpha & abs(utah_res_14v9$log2FoldChange) > lfcThreshold),]@rownames
@@ -779,7 +778,7 @@ straw_14v9 <- straw_res_14v9[which(!is.na(straw_res_14v9$padj) & straw_res_14v9$
 
 all_14v9 <- list(June = june_14v9, Utah = utah_14v9, Strawberry = straw_14v9)
 
-# Gene list for contrast between weeks 14 and 12 (Week 12 is reference)
+# Transcript list for contrast between weeks 14 and 12 (Week 12 is reference)
 
 june_14v12 <- june_res_14v12[which(!is.na(june_res_14v12$padj) & june_res_14v12$padj < alpha & abs(june_res_14v12$log2FoldChange) > lfcThreshold),]@rownames
 utah_14v12 <- utah_res_14v12[which(!is.na(utah_res_14v12$padj) & utah_res_14v12$padj < alpha & abs(utah_res_14v12$log2FoldChange) > lfcThreshold),]@rownames
@@ -809,7 +808,7 @@ getVenn <- function(list) {
     # 3. set label layer
     geom_sf_text(aes(label = name), data = venn_setlabel(vennData)) +
     # 4. region label layer
-    geom_sf_label(aes(label = count), data = venn_region(vennData)) +
+    geom_sf_label(aes(label = count), data = venn_region(vennData), size = 2) +
     scale_fill_distiller(palette = "Blues", direction = 1) +
     theme_void() +
     theme(legend.position = "none")
@@ -828,19 +827,21 @@ ggsave("./figures/venn_diagram/venn_diagrams.pdf", myPlot)
 
 ```
 
-# Candidate Gene Identification
+# Candidate Transcript Identification
 
 ## Geneontology.org
 
-Generate a comprehensive list of candidate genes using Geneontology.org.
+Generate a comprehensive list of candidate transcripts using Geneontology.org.
 
 Navigate to Geneontology.org > Input search terms and search > Select "Annotations" > Select "Custom Download" > Select the following columns of interest: Gene/product (bioentity_label), Gene/product_name (bioentity_name), GO_class (direct) (annotation_class), Contributor (assigned_by), Organism (taxon_label), Evidence (evidence_type), Evidence_with (evidence_with), Reference (reference) and Date (date) > Download and save as .tsv > Input Column names: "Gene	Gene_name	GO_class	Contributor	Organism	Evidence	Evidence_with	Reference	Date."  
 
-### Generate Vectors of Candidate Genes
+## Generate Vectors of Candidate Transcripts
+
+The following code was initially written for analyses at the gene-level, hence the use of gene instead of transcript throughout the following code chunks. The same code applies whether at the gene or transcript-level. 
 
 ```{r}
 
-# Generate vector of all genes
+# Generate vector of all transcripts
 
 all_genes <- row.names(june_dds)
 
@@ -858,30 +859,26 @@ GO_annot_path2 <- "./data/go_annotations/development+craniofacial.tsv"
 
 GO_annot2 <- read_tsv(GO_annot_path2)
 
+# Combine tables
+
+GO_annot_combined <- rbind(GO_annot1, GO_annot2)
+
 # Extract unique genes (case insensitive)
 
 GO_genes <- tolower(GO_annot_combined$Gene) %>% unique()
 
-search <- GO_genes %in% all_genes
+final_genes <- character()
 
-#final_genes <- character()
+for (gene in GO_genes) {
+  pattern <- paste0("^", gene, "_")
+  final_genes <- append(grep(pattern, all_genes, value = TRUE), final_genes)
+}
 
-#for (gene in GO_genes) {
-#  pattern <- paste0("^", gene, "_")
-#  final_genes <- append(grep(pattern, all_genes, value = TRUE), geneV)
-#}
-
-# Generate vector of all candidate genes 
-
-final_genes <- tibble(GO_genes, search) %>%
-  filter(search == TRUE) %>%
-  pull(GO_genes) %>%
-  as.vector()
 ```
 
-### Generate Tables of Candidate Genes and Expression Levels
+## Generate Tables of Candidate Transcripts and Expression Levels
 
-These 43 candidate genes were then analyzed between the contrasts of 12v9, 14v12 and 14v9 to determine if the gene was upregulated (1), downregulated (-1), unchanged (0) or undetermined (padj = NA). Genes were then removed if their padj equaled NA or if they were in the "0 0 0 0 0 0" category because this indicated the genes were unchanged across all contrasts. This left me with 27 final candidate genes.
+These 79 candidate transcripts were then analyzed between the contrasts of 12v9, 14v12 and 14v9 to determine if the gene was upregulated (1), downregulated (-1), unchanged (0) or undetermined (padj = NA). Genes were then removed if their padj equaled NA or if they were in the "0 0 0 0 0 0" category because this indicated the genes were unchanged across all contrasts. After filtering, 50 final candidate transcripts remained.
 
 ```{r}
 
@@ -889,7 +886,7 @@ library(nbHelpers)
 
 # Functions
 
-# Create Column of Expression Levels (i.e., upregulated (1), downregulated (-1), unchanged (0)) & NA, and then Subset Dataframe
+# Create column of expression levels (i.e., upregulated (1), downregulated (-1), unchanged (0)) & NA, and then subset dataframe
 
 candidate_genes <- function(result, final_gene, alpha, lfcThreshold, combo) {
   result <- deseqRes2Tibble(result) %>%
@@ -903,7 +900,7 @@ candidate_genes <- function(result, final_gene, alpha, lfcThreshold, combo) {
   return(result)
 }
 
-# Run candidate genes function
+# Run candidate transcripts function
 
 # 12v9
 
@@ -944,11 +941,11 @@ candidate_expression_combined <- full_join(candidate_expression_combined_14v9,
                                                      candidate_expression_combined_14v12,
                                                      by = "gene"), by = "gene")
 
-# Remove any genes that have an NA for their padj from all time combinations (12v9, 14v12, 14v9).
+# Remove any transcripts that have an NA for their padj from all time combinations (12v9, 14v12, 14v9).
 
 candidate_expression_combined <- drop_na(candidate_expression_combined)
 
-# Generate combo column with expression combinations of each gene (i.e., 0 0 0 0 0 1 = Upregulated in straw in 14v12, unchanged for all other species and times). Currently, only includes 12v9 & 14v12. Code below can easily be modified to include 14v9 information and extend the combination. However, for now I'm just basing my combinations off of 12v9 and 14v12. This makes the interpretation much simpler!
+# Generate combo column with expression combinations of each transcript (i.e., 0 0 0 0 0 1 = Upregulated in straw in 14v12, unchanged for all other species and times) in 12v9 and 14v12 contrasts.
 
 candidate_expression_combined$combo <- paste(candidate_expression_combined$J_12v9, 
                                         candidate_expression_combined$U_12v9,
@@ -957,28 +954,31 @@ candidate_expression_combined$combo <- paste(candidate_expression_combined$J_12v
                                         candidate_expression_combined$U_14v12,
                                         candidate_expression_combined$S_14v12)
 
-# Generate counts of expression combinations to explore clustering of genes 
+# Generate counts of expression combinations to explore clustering of transcripts 
 
 candidate_expression_counts <- dplyr::count(candidate_expression_combined, combo)
 
 # Pull genes from specific expression combinations of interest
 
-check <- filter(candidate_expression_combined, combo == "0 1 0 0 -1 0") %>% select(gene) %>% pull(gene)
+check <- filter(candidate_expression_combined, combo == "0 0 0 0 0 1") %>% select(gene) %>% pull(gene)
 
-# Look at p-value for specific gene. This can be useful to confirm that other functions are working appropriately. 
+# Look at p-value for specific transcript. This can be useful to confirm that other functions are working appropriately. 
 
-genePvalue <- deseqRes2Tibble(straw_res_14v12) %>% filter(gene == "SKI")
+genePvalue <- deseqRes2Tibble(straw_res_14v12) %>% filter(gene == "ski_1")
 ```
 
-# Candidate Gene Plots
+# Candidate Transcript Plots
 
-## Plot Counts (Gene-level)
+## Plot Counts
 
-Generated normalized counts using plotCounts and then generated my own plot using ggplot2 with the data frame plotCounts returned. 
-
-The biggest issue with this plot (single and multiple gene plots) is that the scaling can be off. I will have to manually fix this if I use these plots. 
+Generate normalized counts using plotCounts() and then generate plots from these data using ggplot2 for all differentially expressed transcripts
 
 ```{r}
+library(tidyverse)
+library(DESeq2)
+library(ggpubr)
+library(grid)
+library(gridExtra)
 library("ggprism")
 library("scales")
 
@@ -1056,7 +1056,7 @@ pValue_Combo <- function(june_res_12v9, utah_res_12v9, straw_res_12v9,
   return(p_combo)
 }
 
-# Generate plot of gene counts for gene of interest
+# Generate plot of transcript counts for transcript of interest
 
 gene_counts <- function(j_dds, u_dds, s_dds, gene_name, significance) {
  
@@ -1112,175 +1112,7 @@ gene_counts <- function(j_dds, u_dds, s_dds, gene_name, significance) {
   # Generate plot of counts
   
   ggplot(counts, aes(x = Time, y = count, color = species)) + 
-    geom_point(position = position_jitter(w = 0.1, h = 0)) +
-    geom_line(average, mapping = aes(x = time, y = average, group = species)) +
-    scale_y_log10(limits = c(NA, 6*max(counts$count))) +
-    scale_colour_discrete("Species") +
-    theme_bw() +
-    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
-          plot.title = element_text(hjust = 0.5, size = 9), axis.title.x = element_blank(),
-          axis.title.y = element_blank()) +
-    ggtitle(gene_name) +
-    add_pvalue(j_significance, label = "signif", xmin = "Time2", xmax = "Time1", 
-               y.position = log10(1.5*max(counts$count)), tip.length = .01, step.increase = 0.06,
-               label.size = 4, bracket.color = "black") +
-    add_pvalue(u_significance, label = "signif", xmin = "Time2", xmax = "Time1", 
-               y.position = log10(1.55*max(counts$count)), tip.length = .01, step.increase = 0.06,
-               label.size = 4, bracket.color = "transparent") +
-    add_pvalue(s_significance, label = "signif", xmin = "Time2", xmax = "Time1", 
-               y.position = log10(1.65*max(counts$count)), tip.length = .01, step.increase = 0.06,
-               label.size = 4, bracket.color = "transparent") 
-}
-
-# Some of the plots display in scientific notation. This will set a higher penality for deciding to use scientific notation
-options(scipen=10000)
-```
-
-### Multiple Genes
-
-#### Plots of genes by Combo of Interest
-
-```{r}
-library(ggpubr)
-library(grid)
-library(gridExtra)
-
-# Functions
-
-# Generates multiple plots for combination of interest
-
-multiGene_plot <- function(interest, str1) {
-  
-  gene_list <- list()
-    
-  # Generate list of plots from expression combination of interest 
-
-  for (i in interest) {
-    pValue_Final <- pValue_Combo(june_res_12v9, utah_res_12v9, straw_res_12v9,
-                           june_res_14v12, utah_res_14v12, straw_res_14v12,
-                           june_res_14v9, utah_res_14v9, straw_res_14v9, i)
-
-    # Make sure genes that equal NA are not plotted
-    
-    if (!any(is.na(pValue_Final$signif))) {
-      gene_plot <- gene_counts(june_dds, utah_dds, straw_dds, i, pValue_Final)
-      gene_list[[i]] <- gene_plot
-    }
-  }
-  
-  # Arrange plots into groups of 8 per page and store in a list
-  
-  # If length of genelist is <= 8 & != 0, tempfiglist must be stored in figlist (i.e. nested list) for marrange to work
-  
-  if (length(gene_list) <= 8 & length(gene_list) != 0) {
-    tempfiglist <- ggarrange(plotlist = gene_list, ncol=4, nrow=2, 
-                             common.legend = TRUE, legend="bottom") 
-    figlist <- list(tempfiglist)
-    final_pdf <- marrangeGrob(figlist, nrow = 1, ncol = 1, top = str1, left = "Counts", bottom = "Time")
-    pdf_name <- paste("./figures/counts/", str1, ".pdf", sep ="")
-    pdf_name <- gsub(" ", "", pdf_name)   
-    ggsave(file = pdf_name, final_pdf)
-    
-  } else if (length(gene_list) != 0) {
-    figlist <- ggarrange(plotlist = gene_list, ncol=4, nrow=2, common.legend = TRUE, legend="bottom") 
-    final_pdf <- marrangeGrob(figlist, nrow = 1, ncol = 1, top = str1, left = "Counts", bottom = "Time")
-    pdf_name <- paste("./figures/counts/", str1, ".pdf", sep ="")
-    pdf_name <- gsub(" ", "", pdf_name)   
-    ggsave(file = pdf_name, final_pdf)
-    
-  }
-  
-}
-```
-
-```{r}
-# Determine expression combinations of interest from all candidate genes
-  
-combination <- dplyr::count(candidate_expression_counts, combo) %>% pull(combo)
-
-#combination <- combination[combination != "0 0 0 0 0 0"]
-
-# It can really speed up the time it takes to execute the code below if the combination where all genes are unchanged is removed. You can use the following code to do so: combination <- combination[combination != "0 0 0 0 0 0"]
-
-# Loop through all specific expression combinations of interest and generate PDFs of plots
-
-for (i in combination) {
-  
-  plotCombo <- filter(candidate_expression_combined, combo == i) %>% select(gene) %>% pull(gene)
-  
-  multiGene_plot(plotCombo, i)
-  
-  }
-```
-
-#### Plots of all 28 genes
-
-```{r}
-library(tidyverse)
-library(DESeq2)
-library(ggpubr)
-library(grid)
-library(gridExtra)
-library("ggprism")
-library("scales")
-
-# The functions below have been modified from functions above so that all 28 plots would fit onto 3 pages and that none of the brackets and asterisks were lost
-
-gene_counts <- function(j_dds, u_dds, s_dds, gene_name, significance) {
- 
-  # Dataframe of plot counts for points
-  
-  j_gene <- plotCounts(j_dds, gene = gene_name, intgroup = c("Time"), returnData = TRUE)
-  j_gene <- data.frame(j_gene, species = c("June"))
-  
-  u_gene <- plotCounts(u_dds, gene = gene_name, intgroup = c("Time"), returnData = TRUE)
-  u_gene <- data.frame(u_gene, species = c("Utah"))
-  
-  s_gene <- plotCounts(s_dds, gene = gene_name, intgroup = c("Time"), returnData = TRUE)
-  s_gene <- data.frame(s_gene, species = c("Strawberry"))
-  
-  # Data frame of average counts for line
-  
-  j_average <- as_tibble(j_gene) %>% group_by(Time) %>% summarise(average = mean(count)) 
-  j_average <- data.frame(j_average, species = c("June"))
-
-  u_average <- as_tibble(u_gene) %>% group_by(Time) %>% summarise(average = mean(count)) 
-  u_average <- data.frame(u_average, species = c("Utah"))
-
-  s_average <- as_tibble(s_gene) %>% group_by(Time) %>% summarise(average = mean(count))
-  s_average <- data.frame(s_average, species = c("Strawberry"))
-
-  # Data frame of significance for each species
-  
-  significance <- mutate(significance, species = case_when(species == "june" ~ "June",
-                                                           species == "utah" ~ "Utah",
-                                                           species == "straw" ~ "Strawberry"))
-
-  j_significance <- filter(significance, species == "June")
-  u_significance <- filter(significance, species == "Utah")
-  s_significance <- filter(significance, species == "Strawberry")
-  
-  # Merge plot counts data frames together
-  
-  counts <- rbind(j_gene, u_gene, s_gene)
-  
-  # Refactor species column so order is displayed correctly in legend
-  
-  counts$species <- factor(counts$species, levels = c("June", "Utah", "Strawberry"))
-  
-  # Merge average counts data frames together
-  
-  average <- rbind(j_average, u_average, s_average)
-  average <- dplyr::rename(average, time = Time)
-  
-  # Refactor species column so order is displayed correctly in legend
-  
-  average$species <- factor(average$species, levels = c("June", "Utah", "Strawberry"))
-  
-  # Generate plot of counts
-  
-  ggplot(counts, aes(x = Time, y = count, color = species)) + 
-    geom_point(position = position_jitter(w = 0.1, h = 0)) +
+    geom_point(position = position_jitter(w = 0.1, h = 0), size = .5) +
     geom_line(average, mapping = aes(x = time, y = average, group = species)) +
     scale_y_log10(limits = c(NA, 7*max(counts$count))) +
     scale_colour_discrete("Species") +
@@ -1304,6 +1136,8 @@ gene_counts <- function(j_dds, u_dds, s_dds, gene_name, significance) {
 # Some of the plots display in scientific notation. This will set a higher penality for deciding to use scientific notation
 options(scipen=10000)
 
+# Generates plots of all differentially expressed genes
+
 multiGene_plot <- function(interest, str1) {
   
   gene_list <- list()
@@ -1323,35 +1157,21 @@ multiGene_plot <- function(interest, str1) {
     }
   }
   
-  # Arrange plots into groups of 8 per page and store in a list
+  # If go back to all 50 on one page, make list into a nested list so mmarrange will work
   
-  # If length of genelist is <= 8 & != 0, tempfiglist must be stored in figlist (i.e. nested list) for marrange to work
-  
-  if (length(gene_list) <= 8 & length(gene_list) != 0) {
-    tempfiglist <- ggarrange(plotlist = gene_list, ncol=3, nrow=3, 
-                             common.legend = TRUE, legend="bottom") 
-    figlist <- list(tempfiglist)
+    figlist <- ggarrange(plotlist = gene_list, ncol=5, nrow=5, common.legend = TRUE, legend="bottom") 
     final_pdf <- marrangeGrob(figlist, nrow = 1, ncol = 1, left = "Counts", bottom = "Time", top = NULL)
     pdf_name <- paste("./figures/counts/", str1, ".pdf", sep ="")
     pdf_name <- gsub(" ", "", pdf_name)   
-    ggsave(file = pdf_name, final_pdf)
-    
-  } else if (length(gene_list) != 0) {
-    figlist <- ggarrange(plotlist = gene_list, ncol=3, nrow=3, common.legend = TRUE, legend="bottom") 
-    final_pdf <- marrangeGrob(figlist, nrow = 1, ncol = 1, left = "Counts", bottom = "Time", top = NULL)
-    pdf_name <- paste("./figures/counts/", str1, ".pdf", sep ="")
-    pdf_name <- gsub(" ", "", pdf_name)   
-    ggsave(file = pdf_name, final_pdf, width = 8.5, height = 11, units = "in") # figlist,
-    
-  }
+    ggsave(file = pdf_name, final_pdf, width = 8.5, height = 11, units = "in") 
   
 }
+
+# Remove candidate transcripts that were not differentially expressed for all time points
 
 plotCombo <- filter(candidate_expression_combined, combo != "0 0 0 0 0 0") %>%
   select(gene) %>% pull(gene)
 
-multiGene_plot(plotCombo, "All")
+multiGene_plot(plotCombo, "all_transcripts")
 
 ```
-
-

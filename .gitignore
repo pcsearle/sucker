@@ -12,3 +12,4 @@ differential_expression/data/transcriptomes/unfiltered/june_transcripts.fasta
 differential_expression/data/transcriptomes/unfiltered/utah_transcripts.fasta
 differential_expression/data/transcriptomes/unfiltered/straw_transcripts.fasta
 differential_expression/data/transcriptomes/unfiltered/NCBI/
+differential_expression/figures/counts/gene/
