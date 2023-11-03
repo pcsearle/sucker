@@ -874,6 +874,7 @@ for (gene in GO_genes) {
   final_genes <- append(grep(pattern, all_genes, value = TRUE), final_genes)
 }
 
+
 ```
 
 ## Generate Tables of Candidate Transcripts and Expression Levels
@@ -954,6 +955,8 @@ candidate_expression_combined$combo <- paste(candidate_expression_combined$J_12v
                                         candidate_expression_combined$U_14v12,
                                         candidate_expression_combined$S_14v12)
 
+candidate_expression_combined <- arrange(candidate_expression_combined, gene)
+
 # Generate counts of expression combinations to explore clustering of transcripts 
 
 candidate_expression_counts <- dplyr::count(candidate_expression_combined, combo)
@@ -964,12 +967,13 @@ check <- filter(candidate_expression_combined, combo == "0 0 0 0 0 1") %>% selec
 
 # Look at p-value for specific transcript. This can be useful to confirm that other functions are working appropriately. 
 
-genePvalue <- deseqRes2Tibble(straw_res_14v12) %>% filter(gene == "ski_1")
+genePvalue <- deseqRes2Tibble(straw_res_14v12) %>% filter(gene == "nipbl_1")
+
 ```
 
 # Candidate Transcript Plots
 
-## Plot Counts
+## All Candidate Transcripts
 
 Generate normalized counts using plotCounts() and then generate plots from these data using ggplot2 for all differentially expressed transcripts
 
@@ -1124,13 +1128,13 @@ gene_counts <- function(j_dds, u_dds, s_dds, gene_name, significance) {
     ggtitle(gene_name) +
     add_pvalue(j_significance, label = "signif", xmin = "Time2", xmax = "Time1", 
                y.position = log10(1.5*max(counts$count)), tip.length = .01, step.increase = 0.06,
-               label.size = 4, bracket.color = "black") +
+               label.size = 2, bracket.color = "black", bracket.size = .2) +
     add_pvalue(u_significance, label = "signif", xmin = "Time2", xmax = "Time1", 
                y.position = log10(1.55*max(counts$count)), tip.length = .01, step.increase = 0.06,
-               label.size = 4, bracket.color = "transparent") +
+               label.size = 2, bracket.color = "transparent") +
     add_pvalue(s_significance, label = "signif", xmin = "Time2", xmax = "Time1", 
                y.position = log10(1.65*max(counts$count)), tip.length = .01, step.increase = 0.06,
-               label.size = 4, bracket.color = "transparent") 
+               label.size = 2, bracket.color = "transparent") 
 }
 
 # Some of the plots display in scientific notation. This will set a higher penality for deciding to use scientific notation
@@ -1170,8 +1174,130 @@ multiGene_plot <- function(interest, str1) {
 plotCombo <- filter(candidate_expression_combined, combo != "0 0 0 0 0 0") %>%
   select(gene) %>% pull(gene)
 
+# Number of candidate genes vs. transcripts
+
+paste("transcripts", length(plotCombo))
+paste("genes", length(unique(gsub('(.+)_.+','\\1', plotCombo))))
+
 # Plot all differentially expressed transcripts
 
 multiGene_plot(plotCombo, "all_transcripts")
 
 ```
+
+## Plots of select transcripts 
+
+```{r}
+
+threeGene_counts <- function(j_dds, u_dds, s_dds, gene_name, significance) {
+ 
+  # Dataframe of plot counts for points
+  
+  j_gene <- plotCounts(j_dds, gene = gene_name, intgroup = c("Time"), returnData = TRUE)
+  j_gene <- data.frame(j_gene, species = c("June"))
+  
+  u_gene <- plotCounts(u_dds, gene = gene_name, intgroup = c("Time"), returnData = TRUE)
+  u_gene <- data.frame(u_gene, species = c("Utah"))
+  
+  s_gene <- plotCounts(s_dds, gene = gene_name, intgroup = c("Time"), returnData = TRUE)
+  s_gene <- data.frame(s_gene, species = c("Strawberry"))
+  
+  # Data frame of average counts for line
+  
+  j_average <- as_tibble(j_gene) %>% group_by(Time) %>% summarise(average = mean(count)) 
+  j_average <- data.frame(j_average, species = c("June"))
+
+  u_average <- as_tibble(u_gene) %>% group_by(Time) %>% summarise(average = mean(count)) 
+  u_average <- data.frame(u_average, species = c("Utah"))
+
+  s_average <- as_tibble(s_gene) %>% group_by(Time) %>% summarise(average = mean(count))
+  s_average <- data.frame(s_average, species = c("Strawberry"))
+
+  # Data frame of significance for each species
+  
+  significance <- mutate(significance, species = case_when(species == "june" ~ "June",
+                                                           species == "utah" ~ "Utah",
+                                                           species == "straw" ~ "Strawberry"))
+
+  j_significance <- filter(significance, species == "June")
+  u_significance <- filter(significance, species == "Utah")
+  s_significance <- filter(significance, species == "Strawberry")
+  
+  # Merge plot counts data frames together
+  
+  counts <- rbind(j_gene, u_gene, s_gene)
+  
+  # Refactor species column so order is displayed correctly in legend
+  
+  counts$species <- factor(counts$species, levels = c("June", "Utah", "Strawberry"))
+  
+  # Merge average counts data frames together
+  
+  average <- rbind(j_average, u_average, s_average)
+  average <- dplyr::rename(average, time = Time)
+  
+  # Refactor species column so order is displayed correctly in legend
+  
+  average$species <- factor(average$species, levels = c("June", "Utah", "Strawberry"))
+  
+  # Generate plot of counts
+  
+  ggplot(counts, aes(x = Time, y = count, color = species)) + 
+    geom_point(position = position_jitter(w = 0.1, h = 0), size = .5) +
+    geom_line(average, mapping = aes(x = time, y = average, group = species)) +
+    scale_y_log10(limits = c(NA, 7*max(counts$count))) +
+    scale_colour_discrete("Species") +
+    theme_bw() +
+    ggtitle(gene_name) +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+          plot.title = element_text(hjust = 0.5, size = 12), axis.title.x = element_blank(),
+          axis.title.y = element_blank(), axis.text.x = element_text(size = 7),
+          axis.text.y = element_text(size = 7)) +
+    add_pvalue(j_significance, label = "signif", xmin = "Time2", xmax = "Time1", 
+               y.position = log10(1.5*max(counts$count)), tip.length = .02, step.increase = 0.06,
+               label.size = 4, bracket.color = "black", bracket.size = .3) +
+    add_pvalue(u_significance, label = "signif", xmin = "Time2", xmax = "Time1", 
+               y.position = log10(1.55*max(counts$count)), tip.length = .02, step.increase = 0.06,
+               label.size = 4, bracket.color = "transparent") +
+    add_pvalue(s_significance, label = "signif", xmin = "Time2", xmax = "Time1", 
+               y.position = log10(1.65*max(counts$count)), tip.length = .02, step.increase = 0.06,
+               label.size = 4, bracket.color = "transparent") 
+}
+
+# Some of the plots display in scientific notation. This will set a higher penality for deciding to use scientific notation
+options(scipen=10000)
+
+
+threeGene_plot <- function(interest, str1) {
+  
+  gene_list <- list()
+    
+  # Generate list of plots from expression combination of interest 
+
+  for (i in interest) {
+    pValue_Final <- pValue_Combo(june_res_12v9, utah_res_12v9, straw_res_12v9,
+                           june_res_14v12, utah_res_14v12, straw_res_14v12,
+                           june_res_14v9, utah_res_14v9, straw_res_14v9, i)
+
+    # Make sure genes that equal NA are not plotted
+    
+    if (!any(is.na(pValue_Final$signif))) {
+      gene_plot <- threeGene_counts(june_dds, utah_dds, straw_dds, i, pValue_Final)
+      gene_list[[i]] <- gene_plot
+    }
+  }
+  
+    figlist <- ggarrange(plotlist = gene_list, ncol=3, common.legend = TRUE, legend="bottom") 
+    figlist <- list(figlist)
+    final_pdf <- marrangeGrob(figlist[1], nrow = 1, ncol = 1, left = "Counts", bottom = "Time", top = NULL)
+    pdf_name <- paste("./figures/counts/", str1, ".pdf", sep ="")
+    pdf_name <- gsub(" ", "", pdf_name)   
+    ggsave(file = pdf_name, final_pdf, width = 8.5, height = 4, units = "in") 
+  
+}
+
+threeGene_plot(c("mmp2_1", "mmp2_2", "nipbl_1"), "three_transcripts")
+
+```
+
+
