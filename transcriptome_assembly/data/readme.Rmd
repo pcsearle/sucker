@@ -7,7 +7,7 @@ output: html_document
 
 This readme file provides metadata for the Genetic_Samples.xlsx file
 
-BYU#: BYU# associated with specimen. All physical samples (Whole Specimens, DNA, RNA) have been updated to have BYU#s. See information below on Arctos Barcodes.
+BYU#: BYU# associated with specimen. All physical samples (Whole Specimens, DNA, RNA) have been updated to have BYU#s.
 Species: June - June sucker; Utah - Utah Lake Utah sucker; Straw - Strawberry Reservoir Utah sucker
 Sample Day: Some fish were collected twice in a week. Sample day refers to the day the fish were collected, not the week
 Week: Some fish were collected twice in a week. Week refers to the week the fish were collected. One or two sample days can be associated with a week depending on how many times fish were collected

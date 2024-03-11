@@ -985,6 +985,7 @@ library(grid)
 library(gridExtra)
 library("ggprism")
 library("scales")
+library(viridis)
 
 # Functions
 
@@ -1119,13 +1120,14 @@ gene_counts <- function(j_dds, u_dds, s_dds, gene_name, significance) {
     geom_point(position = position_jitter(w = 0.1, h = 0), size = .5) +
     geom_line(average, mapping = aes(x = time, y = average, group = species)) +
     scale_y_log10(limits = c(NA, 7*max(counts$count))) +
-    scale_colour_discrete("Species") +
     theme_bw() +
     theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
           plot.title = element_text(hjust = 0.5, size = 6, face = "italic"), axis.title.x = element_blank(),
           axis.title.y = element_blank(), axis.text.x = element_text(size = 5),
           axis.text.y = element_text(size = 5)) +
     ggtitle(gene_name) +
+    scale_color_viridis(discrete=TRUE, end = .8) +
+    labs(color = "Species") +
     add_pvalue(j_significance, label = "signif", xmin = "Time2", xmax = "Time1", 
                y.position = log10(1.5*max(counts$count)), tip.length = .01, step.increase = 0.06,
                label.size = 2, bracket.color = "black", bracket.size = .2) +
@@ -1246,9 +1248,10 @@ threeGene_counts <- function(j_dds, u_dds, s_dds, gene_name, significance) {
     geom_point(position = position_jitter(w = 0.1, h = 0), size = .5) +
     geom_line(average, mapping = aes(x = time, y = average, group = species)) +
     scale_y_log10(limits = c(NA, 7*max(counts$count))) +
-    scale_colour_discrete("Species") +
     theme_bw() +
     ggtitle(gene_name) +
+    scale_color_viridis(discrete=TRUE, end = .8) +
+    labs(color = "Species") +
     theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
           plot.title = element_text(hjust = 0.5, size = 12, face = "italic"), axis.title.x = element_blank(),
           axis.title.y = element_blank(), axis.text.x = element_text(size = 7),
